@@ -27,6 +27,9 @@ class UserService(private val userRepository: UserRepository) {
         user.username = dto.username
         user.email = dto.email
         user.password = passwordEncoder.encode(dto.password)
+        user.firstname = dto.firstname
+        user.lastname = dto.lastname
+        user.dateOfBirth = dto.dateOfBirth
         userRepository.save(user)
         return user;
     }

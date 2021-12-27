@@ -1,5 +1,7 @@
 package com.pandora.identityservice.models
 
+import java.sql.Date
+import java.sql.Timestamp
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -20,5 +22,16 @@ class User {
 
     var password : String = "";
 
+    var firstname : String = "";
 
+    var lastname : String = "";
+
+    @Column(name="date_of_birth")
+    var dateOfBirth : Date = Date(System.currentTimeMillis())
+
+    @Column(name="create_timestamp")
+    var createTimestamp: Timestamp = Timestamp(System.currentTimeMillis())
+
+    @Column(name="update_timestamp")
+    var updateTimestamp: Timestamp = Timestamp(System.currentTimeMillis())
 }
