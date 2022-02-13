@@ -10,3 +10,10 @@ CREATE TABLE IF NOT EXISTS subscription_schema.pack (
     live_edit_amount smallint,
     price decimal
 );
+
+--INSERT INTO TABLE subscription_schema.pack(name, memory_amount, member_amount, live_edit_amount, price)
+--VALUES
+--    ('Base', 5, 1, 5, 0),
+--    ('Standard', 10, 3, 5, 2.99),
+--    ('Premium', 100, 10, 10, 4.99),
+--    ('Platinum', 1024, 0, 0, 6.99);
