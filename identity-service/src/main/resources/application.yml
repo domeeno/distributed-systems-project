@@ -18,3 +18,8 @@ spring:
     secret-key: "85mAhWnVBM"
 server:
   port: 8080
+
+pandora:
+  services:
+    subscription:
+      url: http://localhost:8082

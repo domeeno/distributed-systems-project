@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.pandora.identityservice.dto.LoginDTO
 import com.pandora.identityservice.dto.RegisterDTO
 import com.pandora.identityservice.models.User
+import com.pandora.identityservice.repositories.SubscriptionRepository
 import com.pandora.identityservice.repositories.UserRepository
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -14,7 +15,10 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class UserService(private val userRepository: UserRepository) {
+class UserService(
+    private val userRepository: UserRepository,
+    private val subscriptionRepository: SubscriptionRepository
+    ) {
 
     @Value("\${spring.jwt.secret-key}")
     private val secretKey: String? = "secret"
@@ -30,7 +34,8 @@ class UserService(private val userRepository: UserRepository) {
         user.firstname = dto.firstname
         user.lastname = dto.lastname
         user.dateOfBirth = dto.dateOfBirth
-        userRepository.save(user)
+        val savedUser = userRepository.save(user)
+        subscriptionRepository.createBaseSubscription(savedUser.userId.toString())
         return user;
     }
 
