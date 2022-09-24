@@ -12,21 +12,26 @@ defmodule PandoraCache.Storage do
     Get a cached value from storage
   """
   def get(storage, key) do
-    Agent.get(storage, &Map.get(&1, key))
+    Agent.get(storage, fn state ->
+      Map.get(state, key)
+    end)
   end
 
   @doc """
     Put a new value in the cache storage
   """
   def put(storage, key, value) do
-    Agent.update(storage, &Map.put(&1, key, value))
+    Agent.update(storage, fn state ->
+      Map.put(state, key, value)
+    end)
   end
-  
+
   @doc """
     Delete subject from storage
   """
   def delete(storage, key) do
-    Agent.get_and_update(storage, &Map.pop(&1, key))
+    Agent.get_and_update(storage, fn state ->
+      Map.pop(state, key)
+    end)
   end
-
 end
