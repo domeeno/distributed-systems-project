@@ -33,7 +33,9 @@ defmodule PandoraCache.Registry do
     if Map.has_key?(storage_names, pid_name) do
       {:noreply, {storage_names, refs}}
     else
-      {:ok, storage} = PandoraCache.Storage.start_link([])
+      {:ok, storage} =
+        DynamicSupervisor.start_child(PandoraCache.StorageSupervisor, PandoraCache.Storage)
+
       ref = Process.monitor(storage)
       refs = Map.put(refs, ref, pid_name)
       storage_names = Map.put(storage_names, pid_name, storage)

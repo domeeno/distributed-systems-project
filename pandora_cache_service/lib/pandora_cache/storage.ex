@@ -1,5 +1,5 @@
 defmodule PandoraCache.Storage do
-  use Agent
+  use Agent, restart: :temporary
 
   @doc """
     Starts storage for the Key Value pairs,

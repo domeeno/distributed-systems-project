@@ -23,4 +23,12 @@ defmodule PandoraCache.RegistryTest do
     Agent.stop(storage)
     assert PandoraCache.Registry.lookup(registry, "topic_subject") == :error
   end
+
+  test "delete storage on failure", %{registry: registry} do
+    PandoraCache.Registry.create(registry, "topic_subject")
+    {:ok, storage} = PandoraCache.Registry.lookup(registry, "topic_subject")
+
+    Agent.stop(storage, :shutdown)
+    assert PandoraCache.Registry.lookup(registry, "topic_subject") == :error
+  end
 end
