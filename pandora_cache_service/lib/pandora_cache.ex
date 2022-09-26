@@ -1,18 +1,8 @@
 defmodule PandoraCache do
-  @moduledoc """
-  Documentation for `PandoraCache`.
-  """
+  use Application
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> PandoraCache.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  @impl true
+  def start(_type, _args) do
+    PandoraCache.Supervisor.start_link(name: PandoraCache.Supervisor)
   end
 end

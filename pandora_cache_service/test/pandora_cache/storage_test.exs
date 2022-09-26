@@ -22,4 +22,8 @@ defmodule PandoraCache.StorageTest do
 
     assert PandoraCache.Storage.get(storage, "subject_test") == nil
   end
+
+  test "are temporary workers" do
+    assert Supervisor.child_spec(PandoraCache.Storage, []).restart == :temporary
+  end
 end
