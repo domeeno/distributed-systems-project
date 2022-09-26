@@ -2,7 +2,7 @@ defmodule PandoraCache.StorageTest do
   use ExUnit.Case, async: true
 
   setup do
-    {:ok, storage} = PandoraCache.Storage.start_link([])
+    storage = start_supervised!(PandoraCache.Storage)
     %{storage: storage}
   end
 
