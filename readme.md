@@ -30,7 +30,7 @@ The system will be back-end focused, but a small front-end interface may be tack
 
 ## 2. System Architecture
 
-![General System Architecture](./diagrams/distributed-systems-general-arch.drawio.svg)<img src="(./diagrams/distributed-systems-general-arch.drawio.svg">
+![General System Architecture](./diagrams/distributed-systems-general-arch.drawio.svg)<img src="./diagrams/distributed-systems-general-arch.drawio.svg">
 
 1. Front-end or the interface will be written with - <span style="color: #61DBFB;">**React**</span>
 2. Api-Gateway written in - <span style="color: #7B6686;">**Elixir**</span>
