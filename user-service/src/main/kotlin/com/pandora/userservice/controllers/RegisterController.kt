@@ -1,8 +1,11 @@
 package com.pandora.userservice.controllers
 
 import com.pandora.userservice.dto.UserDTO
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import com.pandora.userservice.models.toUserEntity
+import com.pandora.userservice.repository.UserRepository
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -11,10 +14,20 @@ import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
 @RequestMapping("register")
-class RegisterController {
+class RegisterController(
+    @Autowired private val userRepository: UserRepository
+) {
+
+    val passwordEncoder = BCryptPasswordEncoder()
+    private val logger = LoggerFactory.getLogger(RegisterController::class.java)
 
     @PostMapping
-    fun createUser(@RequestBody userDto: UserDTO): UserDTO {
-        return userDto
+    fun createUser(@RequestBody userDto: UserDTO): String {
+        val user = userDto.toUserEntity()
+        user.password = passwordEncoder.encode(userDto.password)
+
+        val savedUser = userRepository.save(user)
+
+        return savedUser.userId.toString()
     }
 }
