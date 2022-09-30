@@ -1,34 +1,35 @@
 package com.pandora.userservice.models
 
 import java.sql.Timestamp
-import java.util.*
+import java.util.Date
+import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 class User {
 
     @Id
-    @Column(name="user_id")
-    var userId : UUID = UUID.randomUUID()
+    @Column(name = "user_id")
+    var userId: UUID = UUID.randomUUID()
 
-    var email : String = ""
+    var email: String = ""
 
-    var password : String = ""
+    var password: String = ""
 
-    var firstName : String = ""
+    var firstname: String = ""
 
-    var lastName : String = ""
+    var lastname: String = ""
 
-    @Column(name="date_of_birth")
-    var dateOfBirth : Date = Date(System.currentTimeMillis())
+    @Column(name = "date_of_birth")
+    var dateOfBirth: Date = Date(System.currentTimeMillis())
 
-    @Column(name="create_timestamp")
+    @Column(name = "create_timestamp")
     var createTimestamp: Timestamp = Timestamp(System.currentTimeMillis())
 
-    @Column(name="update_timestamp")
+    @Column(name = "update_timestamp")
     var updateTimestamp: Timestamp = Timestamp(System.currentTimeMillis())
 }
