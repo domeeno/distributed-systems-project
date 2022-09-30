@@ -20,9 +20,9 @@ class User {
 
     var password: String = ""
 
-    var firstName: String = ""
+    var firstname: String = ""
 
-    var lastName: String = ""
+    var lastname: String = ""
 
     @Column(name = "date_of_birth")
     var dateOfBirth: Date = Date(System.currentTimeMillis())
