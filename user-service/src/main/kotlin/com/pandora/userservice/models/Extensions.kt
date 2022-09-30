@@ -2,7 +2,6 @@ package com.pandora.userservice.models
 
 import com.pandora.userservice.dto.UserDTO
 
-
 fun UserDTO.toUserEntity(): User {
     val user = User()
     user.firstName = this.firstName
