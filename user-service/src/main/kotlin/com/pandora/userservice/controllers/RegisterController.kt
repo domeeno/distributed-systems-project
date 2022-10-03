@@ -19,7 +19,7 @@ class RegisterController(
 ) {
 
     val passwordEncoder = BCryptPasswordEncoder()
-    private val logger = LoggerFactory.getLogger(RegisterController::class.java)
+    private val log = LoggerFactory.getLogger(RegisterController::class.java)
 
     @PostMapping
     fun createUser(@RequestBody userDto: UserDTO): ResponseEntity<String> {

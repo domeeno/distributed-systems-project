@@ -48,7 +48,7 @@ class UserController(
         }
     }
 
-    // TESTING REASONS WILL BE DELETED
+    // TESTING REASONS WILL BE MODIFIED
     @GetMapping("/getUsers")
     fun getUsers(): ResponseEntity<MutableList<User>> {
         return ResponseEntity.ok().body(userRepository.findAll())
