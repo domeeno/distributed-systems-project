@@ -26,6 +26,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     implementation("commons-io:commons-io:2.11.0")
+    implementation("io.jsonwebtoken:jjwt:0.9.1")
 
     runtimeOnly("org.postgresql:postgresql")
 

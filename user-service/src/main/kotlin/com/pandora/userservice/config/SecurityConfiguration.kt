@@ -22,6 +22,7 @@ class SecurityConfiguration {
             .authorizeRequests()
             .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .antMatchers("/register").permitAll()
+            .and()
 
         return http.build()
     }

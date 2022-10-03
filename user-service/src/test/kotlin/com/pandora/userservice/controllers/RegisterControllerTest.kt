@@ -41,7 +41,7 @@ class RegisterControllerTest(
         mockMvc = MockMvcBuilders.webAppContextSetup(applicationContext).build()
     }
 
-    val mockPath = "classpath:mocks/controllers"
+    private val mockPath = "classpath:mocks/controllers"
 
     @Test
     @Throws(Exception::class)
