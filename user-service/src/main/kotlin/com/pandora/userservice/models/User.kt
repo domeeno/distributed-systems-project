@@ -24,6 +24,12 @@ class User {
 
     var lastname: String = ""
 
+    @Column(name = "liked_id")
+    var likedId: String = ""
+
+    @Column(name = "saved_id")
+    var savedId: String = ""
+
     @Column(name = "date_of_birth")
     var dateOfBirth: Date = Date(System.currentTimeMillis())
 

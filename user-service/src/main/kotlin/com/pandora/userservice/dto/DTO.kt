@@ -15,3 +15,8 @@ data class UserLoginDTO(
     val email: String,
     val password: String
 )
+
+data class UserEntryDTO(
+    val likedId: String,
+    val savedId: String
+)
