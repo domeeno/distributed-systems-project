@@ -1,7 +1,9 @@
 package com.pandora.userservice.controllers
 
 import com.pandora.userservice.dto.UserDTO
+import com.pandora.userservice.dto.UserEntryDTO
 import com.pandora.userservice.models.toUserEntity
+import com.pandora.userservice.repository.CourseRepository
 import com.pandora.userservice.repository.UserRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 @Controller
 @RequestMapping("register")
 class RegisterController(
-    @Autowired private val userRepository: UserRepository
+    @Autowired private val userRepository: UserRepository,
+    @Autowired private val courseRepository: CourseRepository
 ) {
 
     val passwordEncoder = BCryptPasswordEncoder()
@@ -27,6 +30,8 @@ class RegisterController(
         user.password = passwordEncoder.encode(userDto.password)
 
         val savedUser = userRepository.save(user)
+
+        courseRepository.createNewUserEntry(UserEntryDTO(user.likedId, user.savedId))
 
         return ResponseEntity.ok(savedUser.userId.toString())
     }

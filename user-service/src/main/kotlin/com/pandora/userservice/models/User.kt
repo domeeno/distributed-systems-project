@@ -24,6 +24,12 @@ class User {
 
     var lastname: String = ""
 
+    @Column(name = "liked_id")
+    var likedId: UUID = UUID.randomUUID()
+
+    @Column(name = "saved_id")
+    var savedId: UUID = UUID.randomUUID()
+
     @Column(name = "date_of_birth")
     var dateOfBirth: Date = Date(System.currentTimeMillis())
 
