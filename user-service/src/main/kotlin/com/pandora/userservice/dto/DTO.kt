@@ -1,6 +1,7 @@
 package com.pandora.userservice.dto
 
 import java.sql.Date
+import java.util.UUID
 
 data class UserDTO(
     val userId: String?,
@@ -17,6 +18,6 @@ data class UserLoginDTO(
 )
 
 data class UserEntryDTO(
-    val likedId: String,
-    val savedId: String
+    val likedId: UUID,
+    val savedId: UUID
 )
