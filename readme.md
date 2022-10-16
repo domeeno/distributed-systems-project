@@ -1,5 +1,4 @@
-## Pandora Box (back-end) 
-
+# Distributed System project. 
 
 ## 1. Project Description & Goals (Non Technical)
 
