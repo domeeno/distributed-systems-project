@@ -1,18 +1,32 @@
 defmodule Gateway do
-  @moduledoc """
-  Documentation for `Gateway`.
-  """
+  use Application
 
-  @doc """
-  Hello world.
+  def start(_type, _args) do
+    children = [
+      Plug.Cowboy.child_spec(
+        scheme: :http,
+        plug: Gateway.Router,
+        options: [
+          dispatch: dispatch(),
+          port: 4000
+        ]
+      ),
+      Registry.child_spec(
+        keys: :duplicate,
+        name: Registry.Gateway
+      )
+    ]
 
-  ## Examples
+    opts = [strategy: :one_for_one, name: Gateway.Application]
+    Supervisor.start_link(children, opts)
+  end
 
-      iex> Gateway.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  defp dispatch do
+    [
+      {:_,
+       [
+         {:_, Plug.Cowboy.Handler, {Gateway.Router, []}}
+       ]}
+    ]
   end
 end
