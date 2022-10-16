@@ -49,7 +49,7 @@ class UserController(
     }
 
     // TESTING REASONS WILL BE MODIFIED
-    @GetMapping("/getUsers")
+    @GetMapping("/all")
     fun getUsers(): ResponseEntity<MutableList<User>> {
         return ResponseEntity.ok().body(userRepository.findAll())
     }
