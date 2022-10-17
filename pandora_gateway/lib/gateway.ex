@@ -1,5 +1,6 @@
 defmodule Gateway do
   use Application
+  require Logger
 
   def start(_type, _args) do
     children = [
@@ -18,6 +19,9 @@ defmodule Gateway do
     ]
 
     opts = [strategy: :one_for_one, name: Gateway.Application]
+
+    Logger.info("Server has started at port: 4000")
+
     Supervisor.start_link(children, opts)
   end
 

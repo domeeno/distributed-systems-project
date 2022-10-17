@@ -6,7 +6,7 @@ defmodule Gateway.MixProject do
       app: :pandora_gateway,
       version: "0.1.0",
       elixir: "~> 1.12",
-      start_permanent: Mix.env() == :prod,
+      start_permanent: Mix.env() == :dev,
       deps: deps()
     ]
   end
@@ -25,8 +25,8 @@ defmodule Gateway.MixProject do
       {:cowboy, "~> 2.4"},
       {:plug, "~> 1.7"},
       {:plug_cowboy, "~> 2.0"},
-      {:jason, "~> 1.1"},
-      {:httpoison, "~> 1.8"}
+      {:httpoison, "~> 1.8"},
+      {:poison, "~> 5.0"}
     ]
   end
 end
