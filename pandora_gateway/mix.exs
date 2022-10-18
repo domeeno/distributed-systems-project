@@ -6,7 +6,7 @@ defmodule Gateway.MixProject do
       app: :pandora_gateway,
       version: "0.1.0",
       elixir: "~> 1.12",
-      start_permanent: Mix.env() == :prod,
+      start_permanent: Mix.env() == :dev,
       deps: deps()
     ]
   end
@@ -14,6 +14,7 @@ defmodule Gateway.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
+      mod: {Gateway, []},
       extra_applications: [:logger]
     ]
   end
@@ -21,8 +22,11 @@ defmodule Gateway.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:cowboy, "~> 2.4"},
+      {:plug, "~> 1.7"},
+      {:plug_cowboy, "~> 2.0"},
+      {:httpoison, "~> 1.8"},
+      {:poison, "~> 5.0"}
     ]
   end
 end

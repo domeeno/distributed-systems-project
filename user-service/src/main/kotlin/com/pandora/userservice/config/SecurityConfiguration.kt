@@ -7,6 +7,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 @EnableWebSecurity
@@ -24,5 +26,19 @@ class SecurityConfiguration {
             .antMatchers("/register", "/user/**").permitAll()
 
         return http.build()
+    }
+
+    @Bean
+    fun corsConfigurer(): WebMvcConfigurer {
+        return object : WebMvcConfigurer {
+            override fun addCorsMappings(registry: CorsRegistry) {
+                registry
+                    .addMapping("/**").allowedOrigins(
+                        "http://localhost:8082",
+                        "http://localhost:8083",
+                        "http://localhost:4000",
+                    )
+            }
+        }
     }
 }
