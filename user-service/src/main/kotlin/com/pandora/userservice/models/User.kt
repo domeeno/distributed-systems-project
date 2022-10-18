@@ -1,7 +1,7 @@
 package com.pandora.userservice.models
 
+import java.sql.Date
 import java.sql.Timestamp
-import java.util.Date
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -24,11 +24,16 @@ class User {
 
     var lastname: String = ""
 
+    var bio: String? = ""
+
     @Column(name = "liked_id")
     var likedId: UUID = UUID.randomUUID()
 
     @Column(name = "saved_id")
     var savedId: UUID = UUID.randomUUID()
+
+    @Column(name = "subjects_id")
+    var subjectsId: UUID = UUID.randomUUID()
 
     @Column(name = "date_of_birth")
     var dateOfBirth: Date = Date(System.currentTimeMillis())

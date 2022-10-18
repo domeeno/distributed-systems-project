@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
@@ -17,7 +16,7 @@ class CourseRepository {
     private val courseUrl: String = ""
 
     fun createNewUserEntry(userEntryDTO: UserEntryDTO): String {
-        val url = UriComponentsBuilder.fromHttpUrl("$courseUrl/user")
+        val url = UriComponentsBuilder.fromHttpUrl("$courseUrl/user/new")
             .encode()
             .toUriString()
 
@@ -25,26 +24,22 @@ class CourseRepository {
         return result.body!!
     }
 
-    fun getUserSubjects(userId: String): String? {
-        val headers = HttpHeaders()
-        headers[HttpHeaders.ACCEPT] = MediaType.APPLICATION_JSON_VALUE
-        val entity: HttpEntity<*> = HttpEntity<Any>(headers)
-
-        val urlTemplate = UriComponentsBuilder.fromHttpUrl("$courseUrl/subject")
+    fun deleteUserEntries(userEntryDTO: UserEntryDTO): String {
+        val url = UriComponentsBuilder.fromHttpUrl("$courseUrl/user")
             .encode()
             .toUriString()
 
-        val params: MutableMap<String, String> = HashMap<String, String>()
-        params["userId"] = userId
+        val params: MutableMap<String, String> = HashMap()
+        params["likedId"] = userEntryDTO.likedId.toString()
+        params["savedId"] = userEntryDTO.savedId.toString()
+        params["subjectId"] = userEntryDTO.subjectsId.toString()
 
-        val result: ResponseEntity<String> = RestTemplate().exchange(
-            urlTemplate,
-            HttpMethod.POST,
-            entity,
-            String::class.java,
-            params
-        )
+        val headers = HttpHeaders()
+        headers.set("Accept", "application/json")
 
-        return result.body
+        val entity: HttpEntity<*> = HttpEntity<Any>(headers)
+
+        val result: ResponseEntity<String> = RestTemplate().exchange(url, HttpMethod.DELETE, entity, String::class.java, params)
+        return result.body!!
     }
 }
