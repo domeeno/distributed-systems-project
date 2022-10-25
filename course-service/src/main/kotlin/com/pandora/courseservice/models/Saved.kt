@@ -8,5 +8,5 @@ class Saved {
     @Id
     var id = ""
 
-    var savedList: MutableList<String> = arrayListOf()
+    var savedList: List<String> = arrayListOf()
 }

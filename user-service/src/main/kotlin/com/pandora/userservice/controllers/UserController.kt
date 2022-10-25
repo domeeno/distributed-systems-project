@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 @RequestMapping("/user")
 class UserController(
     @Autowired private val userRepository: UserRepository,
-    @Autowired private val courseRepository: CourseRepository,
 ) {
 
     private val passwordEncoder = BCryptPasswordEncoder()
@@ -55,48 +54,5 @@ class UserController(
         } else {
             ResponseEntity.ok(generateJwt(user))
         }
-    }
-
-    @PostMapping("/logout")
-    fun logout(): ResponseEntity<Any> {
-        TODO("Log out")
-    }
-
-    @GetMapping("info/{userId}")
-    fun getUserInfo(@PathVariable userId: String): ResponseEntity<UserInfoDTO> {
-        val user = userRepository.findById(userId).get()
-
-        return ResponseEntity.ok(user.toInfo())
-    }
-
-    @GetMapping("{userId}")
-    fun getUser(@PathVariable userId: String): ResponseEntity<EditUserDTO> {
-        // TODO add security
-        val user = userRepository.findById(userId).get()
-
-        return ResponseEntity.ok(user.toEditDTO())
-    }
-
-    @PutMapping("/{userId}")
-    fun editUser(@PathVariable userId: String, @RequestBody userDTO: UserDTO): ResponseEntity<String> {
-        return ResponseEntity.ok("TODO")
-    }
-
-    @DeleteMapping("/{userId}")
-    fun deleteUser(@PathVariable userId: String): ResponseEntity<String> {
-
-        val user = userRepository.findById(userId).get()
-
-        courseRepository.deleteUserEntries(UserEntryDTO(user.likedId, user.savedId, user.subjectsId))
-
-        userRepository.delete(user)
-
-        return ResponseEntity.ok("TODO")
-    }
-
-    // TESTING REASONS WILL BE MODIFIED
-    @GetMapping("/all")
-    fun getUsers(): ResponseEntity<MutableList<User>> {
-        return ResponseEntity.ok().body(userRepository.findAll())
     }
 }

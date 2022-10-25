@@ -20,8 +20,8 @@ class Topic {
 
     var topics: MutableList<Topic> = arrayListOf()
 
-    @Field(name = "document_id")
-    var documentId = ""
+    @Field(name = "file_id")
+    var fileId = ""
 
     @Field(name = "create_timestamp")
     var createTimestamp: Timestamp = Timestamp(System.currentTimeMillis())
