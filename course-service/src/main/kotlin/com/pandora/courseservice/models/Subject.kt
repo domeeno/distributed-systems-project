@@ -18,6 +18,8 @@ class Subject {
 
     var topics: MutableList<Topic> = arrayListOf()
 
+    var tags: MutableList<String> = arrayListOf()
+
     var likes: Int = 0
 
     var saves: Int = 0

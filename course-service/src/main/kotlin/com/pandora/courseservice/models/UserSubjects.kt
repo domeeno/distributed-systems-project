@@ -3,10 +3,10 @@ package com.pandora.courseservice.models
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
-@Document("user_likes")
-class Liked {
+@Document("user_subjects")
+class UserSubjects {
     @Id
     var id = ""
 
-    var likedList: List<String> = arrayListOf()
+    var subjectsList: List<String> = arrayListOf()
 }

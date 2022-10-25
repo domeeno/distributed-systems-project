@@ -1,8 +1,14 @@
 package com.pandora.userservice.controllers
 
+import com.pandora.userservice.dto.EditUserDTO
 import com.pandora.userservice.dto.UserDTO
+import com.pandora.userservice.dto.UserEntryDTO
+import com.pandora.userservice.dto.UserInfoDTO
 import com.pandora.userservice.dto.UserLoginDTO
 import com.pandora.userservice.models.User
+import com.pandora.userservice.models.toEditDTO
+import com.pandora.userservice.models.toInfo
+import com.pandora.userservice.repository.CourseRepository
 import com.pandora.userservice.repository.UserRepository
 import com.pandora.userservice.utils.generateJwt
 import org.slf4j.LoggerFactory
@@ -11,7 +17,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -20,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 @Controller
 @RequestMapping("/user")
 class UserController(
-    @Autowired private val userRepository: UserRepository
+    @Autowired private val userRepository: UserRepository,
 ) {
 
     private val passwordEncoder = BCryptPasswordEncoder()
@@ -46,16 +54,5 @@ class UserController(
         } else {
             ResponseEntity.ok(generateJwt(user))
         }
-    }
-
-    // TESTING REASONS WILL BE MODIFIED
-    @GetMapping("/all")
-    fun getUsers(): ResponseEntity<MutableList<User>> {
-        return ResponseEntity.ok().body(userRepository.findAll())
-    }
-
-    @PutMapping("/edit")
-    fun editUser(@RequestBody userDTO: UserDTO): ResponseEntity<String> {
-        return ResponseEntity.ok("TODO")
     }
 }

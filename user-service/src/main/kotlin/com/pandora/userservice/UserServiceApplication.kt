@@ -14,11 +14,13 @@ fun main(args: Array<String>) {
     val log: Logger = LoggerFactory.getLogger(UserServiceApplication::class.java)
     val context = runApplication<UserServiceApplication>(*args)
 
-    log.info("Local: http://127.0.0.1:{}",
+    log.info(
+        "Local: http://127.0.0.1:{}",
         context.environment.getProperty("server.port", "8080")
     )
 
-    log.info("External: http://{}:{}",
+    log.info(
+        "External: http://{}:{}",
         InetAddress.getLocalHost().hostAddress,
         context.environment.getProperty("server.port", "8080")
     )
