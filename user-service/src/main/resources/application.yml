@@ -14,10 +14,12 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
     generate-ddl: true
-  jwt:
-    secret-key: "85mAhWnVBM"
 server:
   port: 8080
+
+security:
+  jwt:
+    secret: "#sa55NZmpY8)&JGSXkG6sCh3vmLfjdRZ"
 
 pandora:
   services:

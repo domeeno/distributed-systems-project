@@ -1,27 +1,16 @@
 package com.pandora.userservice.controllers
 
-import com.pandora.userservice.dto.EditUserDTO
-import com.pandora.userservice.dto.UserDTO
-import com.pandora.userservice.dto.UserEntryDTO
-import com.pandora.userservice.dto.UserInfoDTO
 import com.pandora.userservice.dto.UserLoginDTO
 import com.pandora.userservice.models.User
-import com.pandora.userservice.models.toEditDTO
-import com.pandora.userservice.models.toInfo
-import com.pandora.userservice.repository.CourseRepository
 import com.pandora.userservice.repository.UserRepository
-import com.pandora.userservice.utils.generateJwt
+import com.pandora.userservice.utils.Utils
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 
@@ -29,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 @RequestMapping("/user")
 class UserController(
     @Autowired private val userRepository: UserRepository,
+    @Autowired private val utils: Utils
 ) {
 
     private val passwordEncoder = BCryptPasswordEncoder()
@@ -52,7 +42,7 @@ class UserController(
         ) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Wrong username or password")
         } else {
-            ResponseEntity.ok(generateJwt(user))
+            ResponseEntity.ok(utils.generateJwt(user))
         }
     }
 }

@@ -6,28 +6,37 @@ import io.jsonwebtoken.SignatureAlgorithm
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ResourceLoader
+import org.springframework.stereotype.Component
 import java.io.IOException
 import java.util.Date
-import kotlin.collections.HashMap
 
-@Value("\${spring.jwt.secret-key}")
-private val secretKey: String = "secret"
+@Component
+class Utils {
+    @Value("\${security.jwt.secret}")
+    private val secret: String = ""
 
-@Throws(IOException::class)
-fun readResourceIntoString(resourceLoader: ResourceLoader, file: String): String {
-    val resource = resourceLoader.getResource(file)
-    return IOUtils.toString(resource.inputStream, "UTF-8")
-}
+    @Value("\${server.port}")
+    private val port: String = ""
 
-fun generateJwt(user: User): String {
-    val claims: HashMap<String, Any?> = HashMap<String, Any?>()
-    claims["email"] = user.email
-    claims["roles"] = "user"
+    @Throws(IOException::class)
+    fun readResourceIntoString(resourceLoader: ResourceLoader, file: String): String {
+        val resource = resourceLoader.getResource(file)
+        return IOUtils.toString(resource.inputStream, "UTF-8")
+    }
 
-    return Jwts.builder()
-        .setIssuer("identity")
-        .setExpiration(Date(System.currentTimeMillis() + 60 * 60 + 1000)) // hour for now
-        .setClaims(claims)
-        .signWith(SignatureAlgorithm.HS256, secretKey)
-        .compact()
+    fun generateJwt(user: User): String {
+        val claims: HashMap<String, Any?> = HashMap()
+        claims["email"] = user.email
+        claims["userId"] = user.userId
+        claims["likes"] = user.likedId
+        claims["saves"] = user.savedId
+        claims["subjects"] = user.subjectsId
+
+        return Jwts.builder()
+            .setIssuer("identity:$port")
+            .setExpiration(Date(System.currentTimeMillis() + 60 * 60 + 1000)) // hour from now (for now)
+            .setClaims(claims)
+            .signWith(SignatureAlgorithm.HS256, secret)
+            .compact()
+    }
 }
