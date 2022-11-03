@@ -2,12 +2,34 @@ version: '3.1'
 
 services:
 
+  course-service:
+    build:
+      context: course-service
+    ports:
+      - 8082:8082
+    depends_on:
+      - mongo
+    cap_add:
+      - NET_ADMIN
+    
+  user-service:
+    build:
+      context: user-service
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+    cap_add:
+      - NET_ADMIN
+
   mongo:
     image: mongo
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - 27017:27017
 
   mongo-express:
     image: mongo-express
@@ -21,7 +43,7 @@ services:
 
   postgres:
     container_name: postgres
-    image: postgres
+    image: postgres:14
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
@@ -56,3 +78,4 @@ networks:
 volumes:
   postgres:
   pgadmin:
+  # user-service:
