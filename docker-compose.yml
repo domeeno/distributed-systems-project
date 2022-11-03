@@ -21,6 +21,8 @@ services:
       - postgres
     cap_add:
       - NET_ADMIN
+    networks:
+    - postgres
 
   mongo:
     image: mongo
@@ -78,4 +80,3 @@ networks:
 volumes:
   postgres:
   pgadmin:
-  # user-service:
