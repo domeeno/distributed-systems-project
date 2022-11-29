@@ -7,7 +7,9 @@ defmodule LoadBalancer.Supervisor do
     supervisor
   end
 
-  
+  def get_count() do
+    DynamicSupervisor.count_children(__MODULE__).active
+  end
 
   def start_balancer(services) do
     start_b(services)

@@ -2,12 +2,6 @@ defmodule Gateway.Router do
   use Plug.Router
   require Logger
 
-  # TODO move to application start
-  # @user_env Application.compile_env!(:pandora_gateway, :services)
-
-  # TODO service urls to be moved to application start and distributed to the load balancers
-  @user_url "http://user_service.address:user_service.ports"
-
   plug(Plug.Static,
     at: "/",
     from: :pandora_gateway
@@ -30,8 +24,9 @@ defmodule Gateway.Router do
     |> send_resp(200, "all good")
   end
 
+  # REPLACE WITH LOAD BALANCER JOB TO SEND REQUESTS
   get "/users" do
-    {status, body} = handle_response(HTTPoison.get("#{@user_url}/user/all"))
+    {status, body} = handle_response(HTTPoison.get("/user/all"))
 
     respond(conn, status, body)
   end
@@ -39,7 +34,7 @@ defmodule Gateway.Router do
   post "/user" do
     {status, body} =
       handle_response(
-        HTTPoison.post("#{@user_url}/register", Poison.encode!(conn.body_params), [
+        HTTPoison.post("/register", Poison.encode!(conn.body_params), [
           {"Content-Type", "application/json"}
         ])
       )
@@ -50,7 +45,7 @@ defmodule Gateway.Router do
   post "/login" do
     {status, body} =
       handle_response(
-        HTTPoison.post("#{@user_url}/user/login", Poison.encode!(conn.body_params), [
+        HTTPoison.post("/user/login", Poison.encode!(conn.body_params), [
           {"Content-Type", "application/json"}
         ])
       )
@@ -73,7 +68,6 @@ defmodule Gateway.Router do
         {404, "Not found :("}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        IO.inspect(reason)
         {500, "Something went wrong"}
     end
   end

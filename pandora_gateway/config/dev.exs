@@ -3,7 +3,7 @@ import Config
 config :pandora_gateway,
   services: [
     %{
-      service: "user",
+      service: "userservice",
       ports: [
         "8085",
         "8086",

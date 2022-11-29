@@ -4,11 +4,13 @@ defmodule LoadBalancer.Agent do
   def start_link(args) do
     {:ok, pid} = GenServer.start_link(__MODULE__, args, name: String.to_atom(args.service))
     Registry.register(Registry.ViaTest, args.service, pid)
+    IO.inspect(args)
     {:ok, pid}
   end
 
+
+  @impl true
   def init(arg) do
-    IO.inspect(arg)
     {:ok,
      %{
        :ports => arg.ports,
@@ -18,7 +20,9 @@ defmodule LoadBalancer.Agent do
     }}
   end
 
-  def status() do
-    "Good"
+  @impl true
+  def handle_call({:status}, _from, state) do
+    IO.puts("good")
+    {:reply, "Good", state}
   end
 end
