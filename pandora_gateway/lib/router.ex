@@ -3,10 +3,10 @@ defmodule Gateway.Router do
   require Logger
 
   # TODO move to application start
-  @user_env Application.compile_env!(:pandora_gateway, :services)
+  # @user_env Application.compile_env!(:pandora_gateway, :services)
 
   # TODO service urls to be moved to application start and distributed to the load balancers
-  @user_url "http://#{@user_env.user_service.address}:#{@user_env.user_service.ports}"
+  @user_url "http://user_service.address:user_service.ports"
 
   plug(Plug.Static,
     at: "/",
@@ -47,15 +47,15 @@ defmodule Gateway.Router do
     respond(conn, status, body)
   end
 
-  post "/login" do 
+  post "/login" do
     {status, body} =
-    handle_response(
-      HTTPoison.post("#{@user_url}/user/login", Poison.encode!(conn.body_params), [
-        {"Content-Type", "application/json"}
-      ])
-    )
+      handle_response(
+        HTTPoison.post("#{@user_url}/user/login", Poison.encode!(conn.body_params), [
+          {"Content-Type", "application/json"}
+        ])
+      )
 
-  respond(conn, status, body)
+    respond(conn, status, body)
   end
 
   match _ do

@@ -2,13 +2,11 @@ defmodule Gateway do
   use Application
   require Logger
 
-  @app_envs Application.compile_env!(:pandora_gateway, :services)
+  @app_services Application.compile_env!(:pandora_gateway, :services)
 
   def start(_type, _args) do
-
-    IO.inspect(@app_envs.user_service)
-
     children = [
+      %{id: Registry, start: {Registry, :start_link, [:duplicate, Registry.ViaTest]}},
       Plug.Cowboy.child_spec(
         scheme: :http,
         plug: Gateway.Router,
@@ -21,10 +19,7 @@ defmodule Gateway do
         keys: :duplicate,
         name: Registry.Gateway
       ),
-      # For each service a balancer
-      %{id: Balancer.UserService, start: {Balancer.Agent, :start_link, [@app_envs.user_service]}},
-      # %{id: Balancer.SubjectService, start: {Balancer.Agent, :start_link, [%{:address => "127.0.0.1", :ports => ["8085", "8086", "8087"]}]}},
-      # %{id: Balancer.BucketService, start: {Balancer.Agent, :start_link, [%{:address => "127.0.0.1", :ports => ["8085", "8086", "8087"]}]}}
+      %{id: ServiceSupervisor, start: {LoadBalancer.Supervisor, :start_link, [@app_services]}}
     ]
 
     opts = [strategy: :one_for_one, name: Gateway.Application]
