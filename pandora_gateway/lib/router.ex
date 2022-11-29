@@ -2,9 +2,11 @@ defmodule Gateway.Router do
   use Plug.Router
   require Logger
 
+  # TODO move to application start
   @user_env Application.compile_env!(:pandora_gateway, :services)
 
-  @user_url "http://#{@user_env.user_service.address}:#{@user_env.user_service.port}"
+  # TODO service urls to be moved to application start and distributed to the load balancers
+  @user_url "http://#{@user_env.user_service.address}:#{@user_env.user_service.ports}"
 
   plug(Plug.Static,
     at: "/",
@@ -22,15 +24,21 @@ defmodule Gateway.Router do
 
   plug(:dispatch)
 
+  get "/status" do
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(200, "all good")
+  end
+
   get "/users" do
-    {status, body} = handle_call(HTTPoison.get("#{@user_url}/user/all"))
+    {status, body} = handle_response(HTTPoison.get("#{@user_url}/user/all"))
 
     respond(conn, status, body)
   end
 
   post "/user" do
     {status, body} =
-      handle_call(
+      handle_response(
         HTTPoison.post("#{@user_url}/register", Poison.encode!(conn.body_params), [
           {"Content-Type", "application/json"}
         ])
@@ -39,13 +47,24 @@ defmodule Gateway.Router do
     respond(conn, status, body)
   end
 
+  post "/login" do 
+    {status, body} =
+    handle_response(
+      HTTPoison.post("#{@user_url}/user/login", Poison.encode!(conn.body_params), [
+        {"Content-Type", "application/json"}
+      ])
+    )
+
+  respond(conn, status, body)
+  end
+
   match _ do
     send_resp(conn, 404, "404")
   end
 
   # Helper functions
 
-  defp handle_call(response) do
+  defp handle_response(response) do
     case response do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         {200, body}

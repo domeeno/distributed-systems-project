@@ -3,11 +3,19 @@ import Config
 config :pandora_gateway,
   services: %{
     user_service: %{
-        port: "8080",
+        ports: [
+          "8085",
+          "8086",
+          "8087"
+        ],
         address: "127.0.0.1"
     },
     course_service: %{
-        port: "8082",
+        ports: [
+          "8090",
+          "8091",
+          "8092",
+        ],
         address: "127.0.0.1"
     },
     bucket_service: %{
