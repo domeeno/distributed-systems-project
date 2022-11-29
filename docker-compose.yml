@@ -6,7 +6,25 @@ services:
     build:
       context: course-service
     ports:
-      - 8082:8082
+      - 8090:8082
+    depends_on:
+      - mongo
+    cap_add:
+      - NET_ADMIN
+  course-service-1:
+    build:
+      context: course-service
+    ports:
+      - 8091:8082
+    depends_on:
+      - mongo
+    cap_add:
+      - NET_ADMIN
+  course-service-2:
+    build:
+      context: course-service
+    ports:
+      - 8092:8082
     depends_on:
       - mongo
     cap_add:
@@ -16,7 +34,29 @@ services:
     build:
       context: user-service
     ports:
-      - 8080:8080
+      - 8085:8080
+    depends_on:
+      - postgres
+    cap_add:
+      - NET_ADMIN
+    networks:
+    - postgres
+  user-service-1:
+    build:
+      context: user-service
+    ports:
+      - 8086:8080
+    depends_on:
+      - postgres
+    cap_add:
+      - NET_ADMIN
+    networks:
+    - postgres
+  user-service-2:
+    build:
+      context: user-service
+    ports:
+      - 8087:8080
     depends_on:
       - postgres
     cap_add:
