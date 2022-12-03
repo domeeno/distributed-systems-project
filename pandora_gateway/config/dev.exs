@@ -9,7 +9,7 @@ config :pandora_gateway,
         "8086",
         "8087"
       ],
-      address: "127.0.0.1"
+      address: "http://127.0.0.1"
     },
     %{
       service: "subject",
@@ -18,11 +18,11 @@ config :pandora_gateway,
         "8091",
         "8092"
       ],
-      address: "127.0.0.1"
+      address: "http://127.0.0.1"
     },
     %{
       service: "bucket",
       ports: ["8083"],
-      address: "127.0.0.1"
+      address: "http://127.0.0.1"
     }
   ]

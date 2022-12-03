@@ -53,6 +53,12 @@ defmodule Gateway.Router do
     respond(conn, status, body)
   end
 
+  post "/test" do
+    response = GenServer.call(:userservice, {:get_request, "/login"})
+    IO.inspect(response)
+    respond(conn, 200, response)
+  end
+
   match _ do
     send_resp(conn, 404, "404")
   end
@@ -68,6 +74,8 @@ defmodule Gateway.Router do
         {404, "Not found :("}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
+        # TODO replace with logger
+        IO.inspect(reason)
         {500, "Something went wrong"}
     end
   end

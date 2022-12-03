@@ -8,21 +8,38 @@ defmodule LoadBalancer.Agent do
     {:ok, pid}
   end
 
-
-  @impl true
   def init(arg) do
     {:ok,
      %{
        :ports => arg.ports,
        :address => arg.address,
-       :current_port => 0,
+       :port_index => 0,
        :alive_services => arg.ports
-    }}
+     }}
   end
 
-  @impl true
+  def handle_call({:post_put_request, url, params, body}, _from, state) do
+    address = state.address <> ":" <> Enum.at(state.ports, state.port_index) <> url
+    IO.puts(address)
+    {:reply, address, state}
+  end
+
+  def handle_call({:get_request, url}, _from, state) do
+    address = state.address <> ":" <> Enum.at(state.alive_services, state.port_index) <> url
+
+    {:reply, address, Map.put(state, :port_index, switch_port(state))}
+  end
+
   def handle_call({:status}, _from, state) do
     IO.puts("good")
     {:reply, "Good", state}
+  end
+
+  defp switch_port(state) do
+    if state.port_index + 1 > length(state.alive_services) - 1 do
+      0
+    else
+      state.port_index + 1
+    end
   end
 end
