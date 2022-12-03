@@ -25,19 +25,11 @@ defmodule Gateway.Router do
   end
 
   # REPLACE WITH LOAD BALANCER JOB TO SEND REQUESTS
-  get "/users" do
-    {status, body} = handle_response(HTTPoison.get("/user/all"))
 
-    respond(conn, status, body)
-  end
-
-  post "/user" do
+  post "/register" do
     {status, body} =
       handle_response(
-        HTTPoison.post("/register", Poison.encode!(conn.body_params), [
-          {"Content-Type", "application/json"}
-        ])
-      )
+        GenServer.call(:userservice, {:post_request, "/register", Poison.encode!(conn.body_params)}))
 
     respond(conn, status, body)
   end
@@ -45,18 +37,9 @@ defmodule Gateway.Router do
   post "/login" do
     {status, body} =
       handle_response(
-        HTTPoison.post("/user/login", Poison.encode!(conn.body_params), [
-          {"Content-Type", "application/json"}
-        ])
-      )
+        GenServer.call(:userservice, {:post_request, "/user/login", Poison.encode!(conn.body_params)}))
 
     respond(conn, status, body)
-  end
-
-  post "/test" do
-    response = GenServer.call(:userservice, {:get_request, "/login"})
-    IO.inspect(response)
-    respond(conn, 200, response)
   end
 
   match _ do

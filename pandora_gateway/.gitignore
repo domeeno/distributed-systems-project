@@ -24,3 +24,5 @@ pandora_gateway-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+*.ex.swp

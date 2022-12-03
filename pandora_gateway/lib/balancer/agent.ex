@@ -18,21 +18,21 @@ defmodule LoadBalancer.Agent do
      }}
   end
 
-  def handle_call({:post_put_request, url, params, body}, _from, state) do
-    address = state.address <> ":" <> Enum.at(state.ports, state.port_index) <> url
-    IO.puts(address)
-    {:reply, address, state}
-  end
-
   def handle_call({:get_request, url}, _from, state) do
     address = state.address <> ":" <> Enum.at(state.alive_services, state.port_index) <> url
 
     {:reply, address, Map.put(state, :port_index, switch_port(state))}
   end
 
-  def handle_call({:status}, _from, state) do
-    IO.puts("good")
-    {:reply, "Good", state}
+  def handle_call({:post_request, url, params}, _from, state) do
+    address = state.address <> ":" <> Enum.at(state.alive_services, state.port_index) <> url
+    IO.inspect(address)
+    response =
+      HTTPoison.post(address, params, [
+        {"Content-Type", "application/json"}
+      ])
+
+    {:reply, response, Map.put(state, :port_index, switch_port(state))}
   end
 
   defp switch_port(state) do
