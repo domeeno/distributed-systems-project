@@ -2,10 +2,6 @@ defmodule Gateway.Router do
   use Plug.Router
   require Logger
 
-  @user_env Application.compile_env!(:pandora_gateway, :services)
-
-  @user_url "http://#{@user_env.user_service.address}:#{@user_env.user_service.port}"
-
   plug(Plug.Static,
     at: "/",
     from: :pandora_gateway
@@ -22,19 +18,26 @@ defmodule Gateway.Router do
 
   plug(:dispatch)
 
-  get "/users" do
-    {status, body} = handle_call(HTTPoison.get("#{@user_url}/user/all"))
+  get "/status" do
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(200, "all good")
+  end
+
+  # REPLACE WITH LOAD BALANCER JOB TO SEND REQUESTS
+
+  post "/register" do
+    {status, body} =
+      handle_response(
+        GenServer.call(:userservice, {:post_request, "/register", Poison.encode!(conn.body_params)}))
 
     respond(conn, status, body)
   end
 
-  post "/user" do
+  post "/login" do
     {status, body} =
-      handle_call(
-        HTTPoison.post("#{@user_url}/register", Poison.encode!(conn.body_params), [
-          {"Content-Type", "application/json"}
-        ])
-      )
+      handle_response(
+        GenServer.call(:userservice, {:post_request, "/user/login", Poison.encode!(conn.body_params)}))
 
     respond(conn, status, body)
   end
@@ -45,7 +48,7 @@ defmodule Gateway.Router do
 
   # Helper functions
 
-  defp handle_call(response) do
+  defp handle_response(response) do
     case response do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         {200, body}
@@ -54,6 +57,7 @@ defmodule Gateway.Router do
         {404, "Not found :("}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
+        # TODO replace with logger
         IO.inspect(reason)
         {500, "Something went wrong"}
     end

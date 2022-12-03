@@ -1,6 +1,11 @@
 # Gateway
 
-**TODO: Add description**
+A gateway is an entry point to a microservices system that manages all or the majority of the outbound calls to other services of the app.
+A gateway should be able to (but not limited):
+- Balance the load - redirect requests to replica in a fashion that it can distribute the load evenly between them,
+- Break the circuit - have a B plan in case a requests takes too long,
+- Notice repeated failure of a service call and stop sending request to a malfunctioning replica.
+
 
 ## Installation
 

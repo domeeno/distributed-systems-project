@@ -1,3 +1,2 @@
-defmodule Gateway.CBRegistry do
-
+defmodule CircuitBreaker.Registry do
 end
