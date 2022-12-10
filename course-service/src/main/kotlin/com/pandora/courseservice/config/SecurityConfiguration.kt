@@ -35,6 +35,7 @@ class SecurityConfiguration {
                 registry
                     .addMapping("/**").allowedOrigins(
                         "http://localhost:8080",
+                        "http://user-service:8080",
                         "http://localhost:8083",
                         "http://localhost:4000",
                     )
