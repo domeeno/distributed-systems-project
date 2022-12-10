@@ -24,4 +24,4 @@ security:
 pandora:
   services:
     course-service:
-      url: "http://course-service:8082"
+      url: "http://course-service-b:8082"

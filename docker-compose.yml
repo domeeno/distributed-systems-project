@@ -14,6 +14,32 @@ services:
     networks:
       - pandora
     container_name: course-service
+  
+  course-service-a:
+    build:
+      context: course-service
+    ports:
+      - 8090:8082
+    depends_on:
+      - mongo
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - pandora
+    container_name: course-service-b
+
+  course-service-b:
+    build:
+      context: course-service
+    ports:
+      - 8091:8082
+    depends_on:
+      - mongo
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - pandora
+    container_name: course-service-c
     
   user-service:
     build:
@@ -27,6 +53,32 @@ services:
     networks:
     - pandora
     container_name: user-service
+
+  user-service-b:
+    build:
+      context: user-service
+    ports:
+      - 8085:8080
+    depends_on:
+      - postgres
+    cap_add:
+      - NET_ADMIN
+    networks:
+    - pandora
+    container_name: user-service-b
+
+  user-service-c:
+    build:
+      context: user-service
+    ports:
+      - 8086:8080
+    depends_on:
+      - postgres
+    cap_add:
+      - NET_ADMIN
+    networks:
+    - pandora
+    container_name: user-service-c
 
   mongo:
     image: mongo

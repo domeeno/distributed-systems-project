@@ -1,6 +1,8 @@
 package com.pandora.userservice.repository
 
+import com.pandora.userservice.controllers.UserController
 import com.pandora.userservice.dto.UserEntryDTO
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -15,7 +17,13 @@ class CourseRepository {
     @Value("\${pandora.services.course-service.url}")
     private val courseUrl: String = ""
 
+    private val log = LoggerFactory.getLogger(CourseRepository::class.java)
+
+
     fun createNewUserEntry(userEntryDTO: UserEntryDTO): String {
+
+        log.info("Sending request to: $courseUrl/user/new")
+
         val url = UriComponentsBuilder.fromHttpUrl("$courseUrl/user/new")
             .encode()
             .toUriString()
