@@ -7,6 +7,8 @@ defmodule Gateway.Router do
     from: :pandora_gateway
   )
 
+  plug(CORSPlug)
+
   plug(:match)
 
   plug(
@@ -24,12 +26,14 @@ defmodule Gateway.Router do
     |> send_resp(200, "all good")
   end
 
-  # REPLACE WITH LOAD BALANCER JOB TO SEND REQUESTS
-
   post "/register" do
     {status, body} =
       handle_response(
-        GenServer.call(:userservice, {:post_request, "/register", Poison.encode!(conn.body_params)}))
+        GenServer.call(
+          :userservice,
+          {:post_request, "/register", Poison.encode!(conn.body_params)}
+        )
+      )
 
     respond(conn, status, body)
   end
@@ -37,7 +41,11 @@ defmodule Gateway.Router do
   post "/login" do
     {status, body} =
       handle_response(
-        GenServer.call(:userservice, {:post_request, "/user/login", Poison.encode!(conn.body_params)}))
+        GenServer.call(
+          :userservice,
+          {:post_request, "/user/login", Poison.encode!(conn.body_params)}
+        )
+      )
 
     respond(conn, status, body)
   end
