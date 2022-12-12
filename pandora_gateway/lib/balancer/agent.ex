@@ -27,6 +27,7 @@ defmodule LoadBalancer.Agent do
   def handle_call({:post_request, url, params}, _from, state) do
     address = state.address <> ":" <> Enum.at(state.alive_services, state.port_index) <> url
     IO.inspect(address)
+
     response =
       HTTPoison.post(address, params, [
         {"Content-Type", "application/json"}

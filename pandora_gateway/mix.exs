@@ -26,7 +26,8 @@ defmodule Gateway.MixProject do
       {:plug, "~> 1.7"},
       {:plug_cowboy, "~> 2.0"},
       {:httpoison, "~> 1.8"},
-      {:poison, "~> 5.0"}
+      {:poison, "~> 5.0"},
+      {:cors_plug, "~> 3.0"}
     ]
   end
 end
