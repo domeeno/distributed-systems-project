@@ -6,6 +6,13 @@ import java.sql.Timestamp
 
 class Topic {
 
+    /*
+       This Document stores Subject's topics, in other words this will branch out the subject into multiple topics
+       They exist attached to a subject.
+
+
+    */
+
     @Id
     var id = ""
 

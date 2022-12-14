@@ -7,6 +7,13 @@ import java.sql.Timestamp
 
 @Document("subjects")
 class Subject {
+    /*
+       This Document stores SUBJECTS - in other words the root of the Subject is this.
+       It can have multiple TOPICS
+
+       To create a topic you have to have a Subject
+    */
+
     @Id
     var id = ""
 

@@ -5,6 +5,10 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 @Document("user_likes")
 class Liked {
+    /*
+        This Document stores user liked subjects
+    */
+
     @Id
     var id = ""
 
