@@ -23,3 +23,8 @@ data class SubjectDTO(
     val subjectName: String
 )
 
+data class CreateSubjectDTO(
+    val subjectName: String,
+    val description: String,
+    val tags: List<String>
+)

@@ -1,8 +1,10 @@
 package com.pandora.courseservice
 
+import com.pandora.courseservice.repository.GraphTopicLookupRepository
 import com.pandora.courseservice.repository.LikedRepository
 import com.pandora.courseservice.repository.SavedRepository
 import com.pandora.courseservice.repository.SubjectRepository
+import com.pandora.courseservice.repository.TopicRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -17,21 +19,24 @@ import java.net.InetAddress
         LikedRepository::class,
         SavedRepository::class,
         SubjectRepository::class,
-        MongoTemplate::class
+        MongoTemplate::class,
+        GraphTopicLookupRepository::class,
+        TopicRepository::class
     ]
 )
 class CourseServiceApplication
-
 
 fun main(args: Array<String>) {
     val log: Logger = LoggerFactory.getLogger(CourseServiceApplication::class.java)
     val context = runApplication<CourseServiceApplication>(*args)
 
-    log.info("Local: http://127.0.0.1:{}",
+    log.info(
+        "Local: http://127.0.0.1:{}",
         context.environment.getProperty("server.port", "8082")
     )
 
-    log.info("External: http://{}:{}",
+    log.info(
+        "External: http://{}:{}",
         InetAddress.getLocalHost().hostAddress,
         context.environment.getProperty("server.port", "8082")
     )

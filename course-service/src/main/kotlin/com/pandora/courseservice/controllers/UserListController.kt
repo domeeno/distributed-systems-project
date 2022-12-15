@@ -137,5 +137,4 @@ class UserListController(
 
         return ResponseEntity.ok(subjectId)
     }
-
 }
