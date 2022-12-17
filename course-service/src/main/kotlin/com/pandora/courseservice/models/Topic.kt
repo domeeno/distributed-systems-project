@@ -3,7 +3,7 @@ package com.pandora.courseservice.models
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
-import java.sql.Timestamp
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Document("topics")
@@ -26,14 +26,14 @@ class Topic {
     @Field(name = "topic_name")
     var topicName = ""
 
-    var topics: MutableList<Topic> = arrayListOf()
+    var childTopics: List<String> = arrayListOf()
 
     @Field(name = "document_id")
     var documentId: String? = null
 
     @Field(name = "create_timestamp")
-    var createTimestamp: Timestamp = Timestamp(System.currentTimeMillis())
+    var createTimestamp: LocalDateTime = LocalDateTime.now()
 
     @Field(name = "update_timestamp")
-    var updateTimestamp: Timestamp = Timestamp(System.currentTimeMillis())
+    var updateTimestamp: LocalDateTime = LocalDateTime.now()
 }

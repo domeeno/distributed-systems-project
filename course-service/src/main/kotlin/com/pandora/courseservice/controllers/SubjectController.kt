@@ -27,6 +27,11 @@ class SubjectController(
     @Autowired private val userSubjectsRepository: UserSubjectsRepository
 ) {
 
+    @GetMapping
+    fun getAllSubjects(): ResponseEntity<List<Subject>> {
+        return ResponseEntity.ok(subjectRepository.findAll())
+    }
+
     @GetMapping("{subjectId}")
     fun getSubjectTree(@PathVariable subjectId: String): ResponseEntity<String> {
         val subject = subjectRepository.findById(subjectId).get()

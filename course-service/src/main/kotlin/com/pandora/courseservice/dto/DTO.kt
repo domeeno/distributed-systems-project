@@ -28,3 +28,8 @@ data class CreateSubjectDTO(
     val description: String,
     val tags: List<String>
 )
+
+data class TopicDTO(
+    val userId: String, // Get from token
+    val topicName: String
+)
