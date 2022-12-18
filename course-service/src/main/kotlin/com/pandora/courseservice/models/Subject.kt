@@ -26,10 +26,9 @@ class Subject {
 
     var description: String? = ""
 
-//    Change from pointing to topics to pointing to a parent topic - for smarter topic traversal
-//    var topics: MutableList<Topic> = arrayListOf()
-    @Field(name = "parent_topic")
-    var parentTopic = ""
+    // subject root topic
+    @Field(name = "root_topic")
+    var rootTopic: String? = ""
 
     var tags: List<String> = arrayListOf()
 

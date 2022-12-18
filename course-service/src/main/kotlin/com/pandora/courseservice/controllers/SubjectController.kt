@@ -51,8 +51,8 @@ class SubjectController(
         childTopic.userId = userId
         val topic = topicRepository.save(childTopic)
 
-        val subject = Subject() // Create subject with root topic created above
-        subject.parentTopic = topic.id
+        val subject = Subject() // Create subject
+        subject.rootTopic = topic.id // This is the root of the topic tree
         subject.subjectName = subjectDto.subjectName
         subject.description = subjectDto.description
         subject.tags = subjectDto.tags
