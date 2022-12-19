@@ -24,3 +24,6 @@ pandora_cache_service-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# disable vim swap
+*.exs.swp
