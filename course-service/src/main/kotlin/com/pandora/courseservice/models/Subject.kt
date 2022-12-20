@@ -28,7 +28,7 @@ class Subject {
 
     // subject root topic
     @Field(name = "root_topic")
-    var rootTopic: String? = ""
+    var rootTopic: String = ""
 
     var tags: List<String> = arrayListOf()
 

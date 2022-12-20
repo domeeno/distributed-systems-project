@@ -1,5 +1,8 @@
 package com.pandora.courseservice.dto
 
+import com.pandora.courseservice.models.Subject
+import com.pandora.courseservice.models.Topic
+
 data class EntryDTO(
     val likedId: String,
     val savedId: String,
@@ -32,4 +35,9 @@ data class CreateSubjectDTO(
 data class TopicDTO(
     val userId: String, // Get from token
     val topicName: String
+)
+
+data class SubjectTreeDTO(
+    val subject: Subject,
+    val tree: Topic
 )

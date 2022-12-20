@@ -28,9 +28,10 @@ class TopicController(
         val parentTopic = topicRepository.findById(topicId).get()
         val newTopic = Topic()
         newTopic.topicName = topicDto.topicName
+        newTopic.parentId = parentTopic.id
         newTopic.userId = topicDto.userId // TODO Get from token
         val topicDb = topicRepository.save(newTopic)
-        parentTopic.childTopics = listOf(topicDb.id) + parentTopic.childTopics
+        parentTopic.childIds = listOf(topicDb.id) + parentTopic.childIds
         topicRepository.save(parentTopic)
         return ResponseEntity.ok(topicDb.id)
     }

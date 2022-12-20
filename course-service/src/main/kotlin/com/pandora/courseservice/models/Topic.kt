@@ -26,7 +26,8 @@ class Topic {
     @Field(name = "topic_name")
     var topicName = ""
 
-    var childTopics: List<String> = arrayListOf()
+    @Field(name = "child_ids")
+    var childIds: List<String> = arrayListOf()
 
     @Field(name = "document_id")
     var documentId: String? = null
@@ -36,4 +37,10 @@ class Topic {
 
     @Field(name = "update_timestamp")
     var updateTimestamp: LocalDateTime = LocalDateTime.now()
+
+    // functional fields
+    @Field(name = "all_topics")
+    var allTopics: List<Topic> = emptyList()
+
+    var childTopics: List<Topic>? = null
 }

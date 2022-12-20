@@ -1,9 +1,10 @@
 package com.pandora.courseservice.controllers
 
 import com.pandora.courseservice.dto.CreateSubjectDTO
+import com.pandora.courseservice.dto.SubjectTreeDTO
 import com.pandora.courseservice.models.Subject
 import com.pandora.courseservice.models.Topic
-import com.pandora.courseservice.repository.GraphTopicLookupRepository
+import com.pandora.courseservice.repository.GraphLookupRepository
 import com.pandora.courseservice.repository.SubjectRepository
 import com.pandora.courseservice.repository.TopicRepository
 import com.pandora.courseservice.repository.UserSubjectsRepository
@@ -21,10 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping
 @Controller
 @RequestMapping("subject")
 class SubjectController(
-    @Autowired private val graphTopicLookupRepository: GraphTopicLookupRepository,
     @Autowired private val subjectRepository: SubjectRepository,
     @Autowired private val topicRepository: TopicRepository,
-    @Autowired private val userSubjectsRepository: UserSubjectsRepository
+    @Autowired private val userSubjectsRepository: UserSubjectsRepository,
+    @Autowired private val graphLookupRepository: GraphLookupRepository
 ) {
 
     @GetMapping
@@ -33,10 +34,20 @@ class SubjectController(
     }
 
     @GetMapping("{subjectId}")
-    fun getSubjectTree(@PathVariable subjectId: String): ResponseEntity<String> {
+    fun getSubjectTree(@PathVariable subjectId: String): ResponseEntity<SubjectTreeDTO> {
         val subject = subjectRepository.findById(subjectId).get()
 
-        return ResponseEntity.ok(subject.id)
+        // 1: graph lookup for topic
+
+        val tree = graphLookupRepository.getTopicTree(subject.rootTopic)
+
+        // 2: assign to response the subject
+        val response = SubjectTreeDTO(
+            subject = subject,
+            tree = tree
+        )
+
+        return ResponseEntity.ok(response)
     }
 
     @PostMapping("{userSubjectId}/user/{userId}")

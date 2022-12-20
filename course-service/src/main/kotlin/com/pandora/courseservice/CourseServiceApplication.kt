@@ -1,6 +1,6 @@
 package com.pandora.courseservice
 
-import com.pandora.courseservice.repository.GraphTopicLookupRepository
+import com.pandora.courseservice.repository.GraphLookupRepository
 import com.pandora.courseservice.repository.LikedRepository
 import com.pandora.courseservice.repository.SavedRepository
 import com.pandora.courseservice.repository.SubjectRepository
@@ -20,8 +20,8 @@ import java.net.InetAddress
         SavedRepository::class,
         SubjectRepository::class,
         MongoTemplate::class,
-        GraphTopicLookupRepository::class,
-        TopicRepository::class
+        TopicRepository::class,
+        GraphLookupRepository::class
     ]
 )
 class CourseServiceApplication
