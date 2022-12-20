@@ -42,5 +42,5 @@ class Topic {
     @Field(name = "all_topics")
     var allTopics: List<Topic> = emptyList()
 
-    var childTopics: List<Topic>? = null
+    var childTopics: List<Topic> = emptyList()
 }

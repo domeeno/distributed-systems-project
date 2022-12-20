@@ -34,26 +34,22 @@ class GraphLookupRepository(
         parentTopic.childTopics = parentTopic.allTopics.filter { it.id in parentTopic.childIds }
         parentTopic.allTopics = parentTopic.allTopics.filter { it.id !in parentTopic.childIds }
 
-        // recurse this
-        // nestTree(parentTopic.allTopics)
+        // now recursion magic - this travels through children topics and nests the tree properly
+        nestTree(parentTopic.childTopics, parentTopic.allTopics)
 
-        // TODO nest properly
-        for (topic in parentTopic.childTopics!!) {
-            topic.childTopics = parentTopic.allTopics.filter { it.id in topic.childIds }
-            parentTopic.allTopics = parentTopic.allTopics.filter { it.id !in topic.childIds }
-        }
+        // empty all topics for energy efficiency
+        parentTopic.allTopics = emptyList()
 
         return parentTopic
     }
 
-    private fun nestTree(topicTree: List<Topic>) {
-        if (topicTree.isEmpty()) {
-            return
-        }
+    private fun nestTree(topicTree: List<Topic>, allTopics: List<Topic>) {
+         for(topic in topicTree) {
+             topic.childTopics = allTopics.filter { it.id in topic.childIds }
 
-        topicTree[0].childTopics = topicTree.filter { it.id in topicTree[0].childIds }
-        val nextTree = topicTree.filter { it.id !in topicTree[0].childIds }
-
-        nestTree(nextTree)
+             if (!(topic.childTopics.none { it.childTopics.isEmpty() })) {
+                nestTree(topic.childTopics, allTopics)
+             }
+         }
     }
 }
