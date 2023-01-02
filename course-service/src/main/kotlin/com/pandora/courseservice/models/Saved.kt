@@ -5,6 +5,10 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 @Document("user_saves")
 class Saved {
+    /*
+        This Document stores user saved subjects
+    */
+
     @Id
     var id = ""
 
