@@ -1,18 +1,7 @@
 defmodule Cache do
-  @moduledoc """
-  Documentation for `Cache`.
-  """
+  use Application
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Cache.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def start(_type, _args) do
+    Cache.Supervisor.start_link(name: CacheSupervisor)
   end
 end
