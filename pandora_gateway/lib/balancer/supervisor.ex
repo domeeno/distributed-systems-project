@@ -1,33 +1,18 @@
 defmodule LoadBalancer.Supervisor do
-  use DynamicSupervisor
+  use Supervisor
 
-  def start_link(services) do
-    supervisor = DynamicSupervisor.start_link(__MODULE__, :ok, name: __MODULE__)
-    :ok = start_balancer(services)
-    supervisor
-  end
+  @app_services Application.compile_env!(:pandora_gateway, :services)
 
-  def get_count() do
-    DynamicSupervisor.count_children(__MODULE__).active
-  end
-
-  def start_balancer(services) do
-    start_b(services)
-  end
-
-  defp start_b([head | tail]) do
-    DynamicSupervisor.start_child(__MODULE__, {LoadBalancer.Agent, head})
-    start_b(tail)
-  end
-
-  defp start_b([]) do
-    :ok
+  def start_link() do
+    Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
   def init(:ok) do
-    DynamicSupervisor.init(
-      strategy: :one_for_one,
-      max_restarts: 1_000
-    )
+    children = [
+      Supervisor.child_spec({LoadBalancer.Agent, Enum.at(@app_services, 0)}, id: :user_service_worker),
+      Supervisor.child_spec({LoadBalancer.Agent, Enum.at(@app_services, 1)}, id: :subject_service_worker),
+      Supervisor.child_spec({LoadBalancer.Agent, Enum.at(@app_services, 2)}, id: :file_service_worker)
+    ]
+    Supervisor.init(children, strategy: :one_for_one)
   end
 end
