@@ -1,9 +1,9 @@
-defmodule PandoraCache.MixProject do
+defmodule Cache.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :pandora_cache_service,
+      app: :cache_service,
       version: "0.1.0",
       elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
@@ -15,7 +15,7 @@ defmodule PandoraCache.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {PandoraCache, []}
+      mod: {Cache, []}
     ]
   end
 

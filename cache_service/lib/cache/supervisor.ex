@@ -1,4 +1,4 @@
-defmodule PandoraCache.Supervisor do
+defmodule Cache.Supervisor do
   use Supervisor
 
   def start_link(opts) do
@@ -8,8 +8,8 @@ defmodule PandoraCache.Supervisor do
   @impl true
   def init(:ok) do
     children = [
-      {DynamicSupervisor, name: PandoraCache.StorageSupervisor, strategy: :one_for_one},
-      {PandoraCache.Registry, name: PandoraCache.Registry}
+      {Cache.Registry, name: Cache.Registry},
+      {DynamicSupervisor, name: Cache.BucketSupervisor, strategy: :one_for_one}
     ]
 
     Supervisor.init(children, strategy: :one_for_all)
