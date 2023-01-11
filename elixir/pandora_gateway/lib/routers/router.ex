@@ -9,6 +9,7 @@ defmodule Gateway.Router do
 
   plug(CORSPlug)
 
+  plug(:dispatch)
   plug(:match)
 
   plug(
@@ -18,37 +19,20 @@ defmodule Gateway.Router do
     json_decoder: Poison
   )
 
-  plug(:dispatch)
-
   get "/status" do
     conn
     |> put_resp_content_type("application/json")
     |> send_resp(200, "all good")
   end
 
-  post "/register" do
-    {status, body} =
-      handle_response(
-        GenServer.call(
-          :userservice,
-          {:post_request, "/register", Poison.encode!(conn.body_params)}
-        )
-      )
+  # userservice
+  forward("/user", to: Router.UserRouter)
 
-    respond(conn, status, body)
-  end
+  # subjectservice
+  # forward("/subject", to: Router.SubjectRouter)
 
-  post "/login" do
-    {status, body} =
-      handle_response(
-        GenServer.call(
-          :userservice,
-          {:post_request, "/user/login", Poison.encode!(conn.body_params)}
-        )
-      )
-
-    respond(conn, status, body)
-  end
+  # userservice
+  # forward("/file", to: Router.FileRouter)
 
   match _ do
     send_resp(conn, 404, "404")
@@ -56,6 +40,7 @@ defmodule Gateway.Router do
 
   # Helper functions
 
+  # TODO handle this duplication later
   defp handle_response(response) do
     case response do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
