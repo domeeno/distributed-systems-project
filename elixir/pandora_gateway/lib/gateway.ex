@@ -2,8 +2,6 @@ defmodule Gateway do
   use Application
   require Logger
 
-  @app_services Application.compile_env!(:pandora_gateway, :services)
-
   def start(_type, _args) do
     children = [
       %{id: Registry, start: {Registry, :start_link, [:duplicate, Registry.ViaTest]}},
@@ -19,7 +17,7 @@ defmodule Gateway do
         keys: :duplicate,
         name: Registry.Gateway
       ),
-      %{id: ServiceSupervisor, start: {LoadBalancer.Supervisor, :start_link, [@app_services]}}
+      %{id: ServiceSupervisor, start: {LoadBalancer.Supervisor, :start_link, []}}
     ]
 
     opts = [strategy: :one_for_one, name: Gateway.Application]
