@@ -9,7 +9,6 @@ defmodule Gateway.Router do
 
   plug(CORSPlug)
 
-  plug(:dispatch)
   plug(:match)
 
   plug(
@@ -19,6 +18,8 @@ defmodule Gateway.Router do
     json_decoder: Poison
   )
 
+  plug(:dispatch)
+
   get "/status" do
     conn
     |> put_resp_content_type("application/json")
@@ -26,7 +27,7 @@ defmodule Gateway.Router do
   end
 
   # userservice
-  forward("/user", to: Router.UserRouter)
+  forward("/user", to: UserRouter)
 
   # subjectservice
   # forward("/subject", to: Router.SubjectRouter)

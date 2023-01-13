@@ -1,5 +1,23 @@
-defmodule Router.UserRouter do
+defmodule UserRouter do
   use Plug.Router
+
+  plug(Plug.Static,
+    at: "/",
+    from: :pandora_gateway
+  )
+  
+  plug(CORSPlug)
+
+  plug(:match)
+
+  plug(
+    Plug.Parsers,
+    parsers: [:json],
+    pass: ["application/json"],
+    json_decoder: Poison
+  )
+
+  plug(:dispatch)
 
   post "/register" do
     {status, body} =
