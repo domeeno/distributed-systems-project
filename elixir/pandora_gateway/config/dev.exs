@@ -25,4 +25,10 @@ config :pandora_gateway,
       ports: ["8083"],
       address: "http://127.0.0.1"
     }
-  ]
+  ],
+  app: %{
+    port: 4000,
+    cache: %{
+      port: 4040
+    }
+  }

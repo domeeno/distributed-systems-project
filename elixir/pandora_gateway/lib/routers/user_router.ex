@@ -5,7 +5,7 @@ defmodule UserRouter do
     at: "/",
     from: :pandora_gateway
   )
-  
+
   plug(CORSPlug)
 
   plug(:match)
