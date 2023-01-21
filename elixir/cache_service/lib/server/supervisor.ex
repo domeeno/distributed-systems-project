@@ -1,5 +1,8 @@
 defmodule Cache.ServerSupervisor do
   use Supervisor
+  
+
+  @app Application.compile_env!(:cache_service, :app)
 
   def start_link(opts) do
     Supervisor.start_link(__MODULE__, :ok, opts)
@@ -9,7 +12,7 @@ defmodule Cache.ServerSupervisor do
   def init(:ok) do
     children = [
       {Task.Supervisor, name: Cache.Server.TaskSupervisor},
-      Supervisor.child_spec({Task, fn -> Cache.Server.accept(4040) end},
+      Supervisor.child_spec({Task, fn -> Cache.Server.accept(@app.port) end},
         restart: :permanent
       )
     ]
