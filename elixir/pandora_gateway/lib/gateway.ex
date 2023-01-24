@@ -5,8 +5,6 @@ defmodule Gateway do
   @app Application.compile_env!(:pandora_gateway, :app)
 
   def start(_type, _args) do
-    Logger.info("Cache has port #{@app.cache.port}")
-
     children = [
       %{id: Registry, start: {Registry, :start_link, [:duplicate, Registry.ViaTest]}},
       Plug.Cowboy.child_spec(
@@ -21,7 +19,8 @@ defmodule Gateway do
         keys: :duplicate,
         name: Registry.Gateway
       ),
-      %{id: ServiceSupervisor, start: {LoadBalancer.Supervisor, :start_link, []}}
+      %{id: ServiceSupervisor, start: {LoadBalancer.Supervisor, :start_link, []}},
+      %{id: CacheServerSupervisor, start: {Cache.ServerSupervisor, :start_link, []}}
     ]
 
     opts = [strategy: :one_for_one, name: Gateway.Application]
