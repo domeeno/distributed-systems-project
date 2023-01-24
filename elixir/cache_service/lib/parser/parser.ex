@@ -35,6 +35,7 @@ defmodule Cache.Parser do
 
   def run({:create, bucket, key, value}) do
     Cache.Registry.create(Cache.Registry, bucket)
+    IO.puts("OK THIS WORKS!!!")
 
     lookup(bucket, fn pid ->
       Cache.Bucket.put(pid, key, value)
