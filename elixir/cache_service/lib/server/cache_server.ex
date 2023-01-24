@@ -2,13 +2,6 @@ defmodule Cache.Server do
   require Logger
 
   def accept(port) do
-    # The options below mean:
-    #
-    # 1. `:binary` - receives data as binaries (instead of lists)
-    # 2. `packet: :line` - receives data line by line
-    # 3. `active: false` - blocks on `:gen_tcp.recv/2` until data is available
-    # 4. `reuseaddr: true` - allows us to reuse the address if the listener crashes
-    #
     {:ok, socket} =
       :gen_tcp.listen(port, [:binary, packet: :line, active: false, reuseaddr: true])
 
@@ -24,19 +17,37 @@ defmodule Cache.Server do
   end
 
   defp serve(socket) do
-    socket
-    |> read_line()
-    |> write_line(socket)
+    msg =
+      with {:ok, data} <- read_line(socket),
+           {:ok, operation} <- Cache.Parser.parse(data),
+           do: Cache.Parser.run(operation)
 
+    write_line(socket, msg)
     serve(socket)
   end
 
   defp read_line(socket) do
-    {:ok, data} = :gen_tcp.recv(socket, 0)
-    data
+    :gen_tcp.recv(socket, 0)
   end
 
-  defp write_line(line, socket) do
-    :gen_tcp.send(socket, line)
+  defp write_line(socket, {:ok, text}) do
+    :gen_tcp.send(socket, text)
+  end
+
+  defp write_line(socket, {:error, :bad_operation}) do
+    :gen_tcp.send(socket, "BAD REQUEST\r\n")
+  end
+
+  defp write_line(_socket, {:error, :closed}) do
+    exit(:shutdown)
+  end
+
+  defp write_line(socket, {:error, :not_found}) do
+    :gen_tcp.send(socket, "NOT FOUND\r\n")
+  end
+
+  defp write_line(socket, {:error, error}) do
+    :gen_tcp.send(socket, "error\r\n")
+    exit(error)
   end
 end

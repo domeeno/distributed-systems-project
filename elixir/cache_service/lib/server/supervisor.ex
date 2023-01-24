@@ -1,6 +1,5 @@
 defmodule Cache.ServerSupervisor do
   use Supervisor
-  
 
   @app Application.compile_env!(:cache_service, :app)
 
