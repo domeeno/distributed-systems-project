@@ -3,27 +3,27 @@ defmodule Cache.Parser do
   Parses queries from gateway service.
 
   ## Example
-    iex> Cache.Parser.parse("create bucket key value \r\n")
+    iex> Cache.Parser.parse("create|bucket|key|value|\r\n")
     {:ok, {:create, "bucket", "key", "value"}}
 
 
-    iex> Cache.Parser.parse("put bucket key value \r\n")
+    iex> Cache.Parser.parse("put|bucket|key|valuer|\r\n")
     {:ok, {:put, "bucket", "key", "value"}}
 
-    iex> Cache.Parser.parse("get bucket key ")
+    iex> Cache.Parser.parse("get|bucket|key|\r\n")
     {:ok, {:get, "bucket", "key"}}
 
-    iex> Cache.Parser.parse("del bucket key ")
+    iex> Cache.Parser.parse("del|bucket|key|\r\n")
     {:ok, {:del, "bucket", "key", "value"}}
 
     iex> 
   """
   def parse(line) do
-    case String.split(line) do
-      ["create", bucket, key, value] -> {:ok, {:create, bucket, key, value}}
-      ["put", bucket, key, value] -> {:ok, {:put, bucket, key, value}}
-      ["get", bucket, key] -> {:ok, {:get, bucket, key}}
-      ["del", bucket, key] -> {:ok, {:del, bucket, key}}
+    case String.split(line, "|") do
+      ["create", bucket, key, value, _endclause] -> {:ok, {:create, bucket, key, value}}
+      ["put", bucket, key, value, _endclause] -> {:ok, {:put, bucket, key, value}}
+      ["get", bucket, key, _endclause] -> {:ok, {:get, bucket, key}}
+      ["del", bucket, key, _endclause] -> {:ok, {:del, bucket, key}}
       _ -> {:error, :bad_operation}
     end
   end
