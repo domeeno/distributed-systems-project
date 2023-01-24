@@ -2,6 +2,8 @@ defmodule Gateway do
   use Application
   require Logger
 
+  @app Application.compile_env!(:pandora_gateway, :app)
+
   def start(_type, _args) do
     children = [
       %{id: Registry, start: {Registry, :start_link, [:duplicate, Registry.ViaTest]}},
@@ -10,19 +12,20 @@ defmodule Gateway do
         plug: Gateway.Router,
         options: [
           dispatch: dispatch(),
-          port: 4000
+          port: @app.port
         ]
       ),
       Registry.child_spec(
         keys: :duplicate,
         name: Registry.Gateway
       ),
-      %{id: ServiceSupervisor, start: {LoadBalancer.Supervisor, :start_link, []}}
+      %{id: ServiceSupervisor, start: {LoadBalancer.Supervisor, :start_link, []}},
+      %{id: CacheServerSupervisor, start: {Cache.ServerSupervisor, :start_link, []}}
     ]
 
     opts = [strategy: :one_for_one, name: Gateway.Application]
 
-    Logger.info("Server has started at port: 4000")
+    Logger.info("Server has started at port: #{@app.port}")
 
     Supervisor.start_link(children, opts)
   end

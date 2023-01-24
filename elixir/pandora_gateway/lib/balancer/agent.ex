@@ -1,20 +1,21 @@
 defmodule LoadBalancer.Agent do
   use GenServer
+  require Logger
 
   def start_link(args) do
     {:ok, pid} = GenServer.start_link(__MODULE__, args, name: String.to_atom(args.service))
     Registry.register(Registry.ViaTest, args.service, pid)
-    IO.inspect(args)
+    Logger.info("Load Balancer for #{args.service} at address #{args.address} started")
     {:ok, pid}
   end
 
-  def init(arg) do
+  def init(args) do
     {:ok,
      %{
-       :ports => arg.ports,
-       :address => arg.address,
+       :ports => args.ports,
+       :address => args.address,
        :port_index => 0,
-       :alive_services => arg.ports
+       :alive_services => args.ports
      }}
   end
 
