@@ -1,4 +1,4 @@
-defmodule UserRouter do
+defmodule SubjectRouter do
   use Plug.Router
   require Logger
 
@@ -20,24 +20,24 @@ defmodule UserRouter do
 
   plug(:dispatch)
 
-  post "/register" do
+  get "/:id" do
     {status, body} =
       handle_response(
         GenServer.call(
-          :userservice,
-          {:post_request, "/register", Poison.encode!(conn.body_params)}
+          :subject,
+          {:get_request, "/subject/#{id}"}
         )
       )
 
     respond(conn, status, body)
   end
 
-  post "/login" do
+  post "/topic" do
     {status, body} =
       handle_response(
         GenServer.call(
-          :userservice,
-          {:post_request, "/user/login", Poison.encode!(conn.body_params)}
+          :subject,
+          {:post_request, "/topic", Poison.encode!(conn.body_params)}
         )
       )
 
@@ -54,8 +54,7 @@ defmodule UserRouter do
         {404, "Not found :("}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        # TODO replace with logger
-        IO.inspect(reason)
+        Logger.error(%{response: response, reason: reason})
         {500, "Something went wrong"}
     end
   end

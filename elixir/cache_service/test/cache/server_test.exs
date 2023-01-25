@@ -14,6 +14,7 @@ defmodule CacheServerTest do
 
   test "server interaction", %{socket: socket} do
     uuid = "a396d27d-ee66-41a1-be81-e7620be3e587"
+
     json = """
     {
     "subject": {
