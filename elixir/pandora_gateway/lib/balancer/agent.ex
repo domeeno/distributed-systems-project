@@ -21,8 +21,8 @@ defmodule LoadBalancer.Agent do
 
   def handle_call({:get_request, url}, _from, state) do
     address = state.address <> ":" <> Enum.at(state.alive_services, state.port_index) <> url
-
-    {:reply, address, Map.put(state, :port_index, switch_port(state))}
+    response = HTTPoison.get(address)
+    {:reply, response, Map.put(state, :port_index, switch_port(state))}
   end
 
   def handle_call({:post_request, url, params}, _from, state) do

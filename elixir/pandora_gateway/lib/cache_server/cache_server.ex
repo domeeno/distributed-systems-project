@@ -22,6 +22,7 @@ defmodule Cache.CacheServer do
 
   def handle_call({:query, command}, _from, state) do
     data = send_and_recv(state.socket, command)
+    _ = send_and_recv(state.socket, "")
     {:reply, data, state}
   end
 

@@ -30,36 +30,12 @@ defmodule Gateway.Router do
   forward("/user", to: UserRouter)
 
   # subjectservice
-  # forward("/subject", to: Router.SubjectRouter)
+  forward("/subject", to: SubjectRouter)
 
-  # userservice
+  # fileservice
   # forward("/file", to: Router.FileRouter)
 
   match _ do
     send_resp(conn, 404, "404")
-  end
-
-  # Helper functions
-
-  # TODO handle this duplication later
-  defp handle_response(response) do
-    case response do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        {200, body}
-
-      {:ok, %HTTPoison.Response{status_code: 404}} ->
-        {404, "Not found :("}
-
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        # TODO replace with logger
-        IO.inspect(reason)
-        {500, "Something went wrong"}
-    end
-  end
-
-  defp respond(conn, code, body) do
-    conn
-    |> put_resp_content_type("application/json")
-    |> send_resp(code, body)
   end
 end
