@@ -14,8 +14,9 @@ defmodule CacheServerTest do
 
   test "server interaction", %{socket: socket} do
     uuid = "a396d27d-ee66-41a1-be81-e7620be3e587"
-    
-    json = "{ \"subject\": { \"id\": \"95aa62ad-933a-4d6d-9d3d-0d03b51262b0\", \"subjectName\": \"Distributed Systems\" } }"
+
+    json =
+      "{ \"subject\": { \"id\": \"95aa62ad-933a-4d6d-9d3d-0d03b51262b0\", \"subjectName\": \"Distributed Systems\" } }"
 
     assert send_and_recv(socket, "0|0|create|subject|\r\n") ==
              "OK|CREATE\r\n"
