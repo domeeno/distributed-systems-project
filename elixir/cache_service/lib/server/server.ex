@@ -2,9 +2,7 @@ defmodule Cache.Server do
   require Logger
 
   def accept(port) do
-    {:ok, socket} =
-      :gen_tcp.listen(port, [:binary, active: false, reuseaddr: true])
-
+    {:ok, socket} = :gen_tcp.listen(port, [:binary, active: false, reuseaddr: true])
     Logger.info("Accepting connections on port #{port}")
     loop_acceptor(socket)
   end
@@ -28,17 +26,21 @@ defmodule Cache.Server do
 
   defp read_line(socket) do
     response = :gen_tcp.recv(socket, 0)
+
     case response do
       {:ok, data} ->
         IO.inspect(response)
         [chunk, size, command] = String.split(data, "|", parts: 3)
-        if (chunk==size) do
+
+        if chunk == size do
           {:ok, command}
         else
           {:ok, read_line_chunks(command, socket)}
         end
+
       # MATCH EVERYTHING ELSE WITH !:ok
-      _ -> response
+      _ ->
+        response
     end
   end
 
@@ -47,7 +49,8 @@ defmodule Cache.Server do
 
     [chunk, size, next_chunk] = String.split(data, "|", parts: 3)
     command = String.replace(command, "\r\n", "") <> next_chunk
-    if (chunk==size) do
+
+    if chunk == size do
       command
     else
       read_line_chunks(command, socket)

@@ -15,8 +15,8 @@ config :pandora_gateway,
       service: "subject",
       ports: [
         "8082",
-        "8090",
-        "8091"
+        #"8090",
+        #"8091"
       ],
       address: "http://127.0.0.1"
     },

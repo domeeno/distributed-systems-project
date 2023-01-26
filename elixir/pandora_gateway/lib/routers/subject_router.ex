@@ -21,15 +21,23 @@ defmodule SubjectRouter do
   plug(:dispatch)
 
   get "/:id" do
-    {status, body} =
-      handle_response(
-        GenServer.call(
-          :subject,
-          {:get_request, "/subject/#{id}"}
-        )
-      )
+    case GenServer.call(:cache_server, {:query, "subject", id}) do
+      {:found, data} ->
+        Logger.info("found cached subject: #{id}")
+        respond(conn, 200, data)
+      {:not_found} ->
+        {status, body} =
+          handle_response(
+            GenServer.call(
+              :subject,
+              {:get_request, "/subject/#{id}"}
+            )
+          )
 
-    respond(conn, status, body)
+        Logger.info("Caching subject: #{id}")
+        GenServer.call(:cache_server, {:update, "subject", id, body})
+        respond(conn, status, body)
+    end
   end
 
   post "/topic" do

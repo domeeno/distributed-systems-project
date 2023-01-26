@@ -1,5 +1,6 @@
 defmodule Cache.Parser do
   require Logger
+
   @doc ~S"""
   Parses queries from gateway service.
 
@@ -22,6 +23,7 @@ defmodule Cache.Parser do
   def parse(line) do
     IO.inspect(line)
     IO.puts("\n\n FINISH LINE \n\n")
+
     case String.split(line, "|") do
       ["create", bucket, _endclause] -> {:ok, {:create, bucket}}
       ["put", bucket, key, value, _endclause] -> {:ok, {:put, bucket, key, value}}
@@ -38,13 +40,14 @@ defmodule Cache.Parser do
 
   def run({:create, bucket}) do
     Cache.Registry.create(Cache.Registry, bucket)
-    #Logger.info("Created bucket: #{bucket}")
+    # Logger.info("Created bucket: #{bucket}")
     {:ok, "OK|CREATE\r\n"}
   end
 
   def run({:get, bucket, key}) do
     lookup(bucket, fn pid ->
       value = Cache.Bucket.get(pid, key)
+
       case value do
         nil -> {:ok, "OK|NOT FOUND|\r\nOK\r\n"}
         _ -> {:ok, "OK|#{value}|\r\nOK\r\n"}
@@ -55,7 +58,7 @@ defmodule Cache.Parser do
   def run({:put, bucket, key, value}) do
     lookup(bucket, fn pid ->
       Cache.Bucket.put(pid, key, value)
-      #IO.inspect(value)
+      # IO.inspect(value)
       {:ok, "OK|PUT|\r\n"}
     end)
   end
