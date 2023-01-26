@@ -3,7 +3,7 @@ defmodule Cache.Server do
 
   def accept(port) do
     {:ok, socket} =
-      :gen_tcp.listen(port, [:binary, packet: :line, active: false, reuseaddr: true])
+      :gen_tcp.listen(port, [:binary, active: false, reuseaddr: true])
 
     Logger.info("Accepting connections on port #{port}")
     loop_acceptor(socket)
@@ -27,7 +27,25 @@ defmodule Cache.Server do
   end
 
   defp read_line(socket) do
-    :gen_tcp.recv(socket, 0)
+    {:ok, data} = :gen_tcp.recv(socket, 0)
+    [chunk, size, command] = String.split(data, "|", parts: 3)
+    if (chunk==size) do
+      {:ok, command}
+    else
+      {:ok, read_line_chunks(command, socket)}
+    end
+  end
+
+  defp read_line_chunks(command, socket) do
+    {:ok, data} = :gen_tcp.recv(socket, 0)
+
+    [chunk, size, next_chunk] = String.split(data, "|", parts: 3)
+    command = String.replace(command, "\r\n", "") <> next_chunk
+    if (chunk==size) do
+      command
+    else
+      read_line_chunks(command, socket)
+    end
   end
 
   defp write_line(socket, {:ok, text}) do
@@ -35,7 +53,7 @@ defmodule Cache.Server do
   end
 
   defp write_line(socket, {:error, :bad_operation}) do
-    :gen_tcp.send(socket, "BAD REQUEST\r\n")
+    :gen_tcp.send(socket, "ERROR|BAD REQUEST|\r\n")
   end
 
   defp write_line(_socket, {:error, :closed}) do
@@ -43,7 +61,7 @@ defmodule Cache.Server do
   end
 
   defp write_line(socket, {:error, :not_found}) do
-    :gen_tcp.send(socket, "NOT FOUND\r\n")
+    :gen_tcp.send(socket, "OK|NOT FOUND|\r\n")
   end
 
   defp write_line(socket, {:error, error}) do

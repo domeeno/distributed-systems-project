@@ -16,8 +16,8 @@ defmodule CacheServerTest do
     uuid = "a396d27d-ee66-41a1-be81-e7620be3e587"
 
     json = """
-    {
-    "subject": {
+      {
+        "subject": {
         "id": "95aa62ad-933a-4d6d-9d3d-0d03b51262b0",
         "subjectName": "Distributed Systems",
         "userId": "845c01ca-35ca-4ab9-a381-2a80cc531d52",
@@ -30,8 +30,8 @@ defmodule CacheServerTest do
         ],
         "likes": 0,
         "saves": 0,
-        "createTimestamp": "2022-12-19T23:08:15.364",
-        "updateTimestamp": "2022-12-19T23:08:15.364"
+        "createTimestamp": "2022-12-19T21:08:15.364",
+        "updateTimestamp": "2022-12-19T21:08:15.364"
     },
     "tree": {
         "id": "eae9e487-57e4-4b00-a658-76fa042d9d41",
@@ -43,22 +43,10 @@ defmodule CacheServerTest do
             "a5418c92-2f1b-4dcd-a9b0-76fd6c2dbbbb"
         ],
         "documentId": null,
-        "createTimestamp": "2022-12-19T23:08:15.2",
-        "updateTimestamp": "2022-12-19T23:08:15.201",
+        "createTimestamp": "2022-12-19T21:08:15.2",
+        "updateTimestamp": "2022-12-19T21:08:15.201",
         "allTopics": [],
         "childTopics": [
-            {
-                "id": "a5418c92-2f1b-4dcd-a9b0-76fd6c2dbbbb",
-                "parentId": "eae9e487-57e4-4b00-a658-76fa042d9d41",
-                "userId": "845c01ca-35ca-4ab9-a381-2a80cc531d52",
-                "topicName": "Bingo",
-                "childIds": [],
-                "documentId": null,
-                "createTimestamp": "2022-12-19T23:38:19.722",
-                "updateTimestamp": "2022-12-19T23:38:19.722",
-                "allTopics": [],
-                "childTopics": []
-            },
             {
                 "id": "2d186eb0-1179-4c92-b281-abb085a63c45",
                 "parentId": "eae9e487-57e4-4b00-a658-76fa042d9d41",
@@ -68,8 +56,8 @@ defmodule CacheServerTest do
                     "393e593b-b867-47be-af98-7d298993f2fa"
                 ],
                 "documentId": null,
-                "createTimestamp": "2022-12-19T23:38:24.772",
-                "updateTimestamp": "2022-12-19T23:38:24.772",
+                "createTimestamp": "2022-12-19T21:38:24.772",
+                "updateTimestamp": "2022-12-19T21:38:24.772",
                 "allTopics": [],
                 "childTopics": [
                     {
@@ -82,22 +70,10 @@ defmodule CacheServerTest do
                             "36b46276-72e9-4174-b469-430f9985ce26"
                         ],
                         "documentId": null,
-                        "createTimestamp": "2022-12-20T00:07:37.447",
-                        "updateTimestamp": "2022-12-20T00:07:37.447",
+                        "createTimestamp": "2022-12-19T22:07:37.447",
+                        "updateTimestamp": "2022-12-19T22:07:37.447",
                         "allTopics": [],
                         "childTopics": [
-                            {
-                                "id": "280270b9-bad9-43e5-90df-236506318e9b",
-                                "parentId": "393e593b-b867-47be-af98-7d298993f2fa",
-                                "userId": "845c01ca-35ca-4ab9-a381-2a80cc531d52",
-                                "topicName": "Dok",
-                                "childIds": [],
-                                "documentId": null,
-                                "createTimestamp": "2022-12-20T01:23:50.925",
-                                "updateTimestamp": "2022-12-20T01:23:50.925",
-                                "allTopics": [],
-                                "childTopics": []
-                            },
                             {
                                 "id": "36b46276-72e9-4174-b469-430f9985ce26",
                                 "parentId": "393e593b-b867-47be-af98-7d298993f2fa",
@@ -109,22 +85,10 @@ defmodule CacheServerTest do
                                     "9c49d3e5-20f0-4cbd-b1dd-25e31e45aae5"
                                 ],
                                 "documentId": null,
-                                "createTimestamp": "2022-12-20T01:23:46.499",
-                                "updateTimestamp": "2022-12-20T01:23:46.499",
+                                "createTimestamp": "2022-12-19T23:23:46.499",
+                                "updateTimestamp": "2022-12-19T23:23:46.499",
                                 "allTopics": [],
                                 "childTopics": [
-                                    {
-                                        "id": "73ca47d5-cade-477e-b055-4bfcecb5fddf",
-                                        "parentId": "36b46276-72e9-4174-b469-430f9985ce26",
-                                        "userId": "845c01ca-35ca-4ab9-a381-2a80cc531d52",
-                                        "topicName": "K",
-                                        "childIds": [],
-                                        "documentId": null,
-                                        "createTimestamp": "2022-12-20T23:25:30.719",
-                                        "updateTimestamp": "2022-12-20T23:25:30.719",
-                                        "allTopics": [],
-                                        "childTopics": []
-                                    },
                                     {
                                         "id": "42d9371c-f960-4473-9ba5-2637a482c91f",
                                         "parentId": "36b46276-72e9-4174-b469-430f9985ce26",
@@ -132,8 +96,8 @@ defmodule CacheServerTest do
                                         "topicName": "O",
                                         "childIds": [],
                                         "documentId": null,
-                                        "createTimestamp": "2022-12-20T23:25:26.34",
-                                        "updateTimestamp": "2022-12-20T23:25:26.34",
+                                        "createTimestamp": "2022-12-20T21:25:26.34",
+                                        "updateTimestamp": "2022-12-20T21:25:26.34",
                                         "allTopics": [],
                                         "childTopics": []
                                     },
@@ -144,28 +108,71 @@ defmodule CacheServerTest do
                                         "topicName": "N",
                                         "childIds": [],
                                         "documentId": null,
-                                        "createTimestamp": "2022-12-20T23:25:23.309",
-                                        "updateTimestamp": "2022-12-20T23:25:23.309",
+                                        "createTimestamp": "2022-12-20T21:25:23.309",
+                                        "updateTimestamp": "2022-12-20T21:25:23.309",
+                                        "allTopics": [],
+                                        "childTopics": []
+                                    },
+                                    {
+                                        "id": "73ca47d5-cade-477e-b055-4bfcecb5fddf",
+                                        "parentId": "36b46276-72e9-4174-b469-430f9985ce26",
+                                        "userId": "845c01ca-35ca-4ab9-a381-2a80cc531d52",
+                                        "topicName": "K",
+                                        "childIds": [],
+                                        "documentId": null,
+                                        "createTimestamp": "2022-12-20T21:25:30.719",
+                                        "updateTimestamp": "2022-12-20T21:25:30.719",
                                         "allTopics": [],
                                         "childTopics": []
                                     }
                                 ]
+                            },
+                            {
+                                "id": "280270b9-bad9-43e5-90df-236506318e9b",
+                                "parentId": "393e593b-b867-47be-af98-7d298993f2fa",
+                                "userId": "845c01ca-35ca-4ab9-a381-2a80cc531d52",
+                                "topicName": "Dok",
+                                "childIds": [],
+                                "documentId": null,
+                                "createTimestamp": "2022-12-19T23:23:50.925",
+                                "updateTimestamp": "2022-12-19T23:23:50.925",
+                                "allTopics": [],
+                                "childTopics": []
                             }
                         ]
                     }
                 ]
+            },
+            {
+                "id": "a5418c92-2f1b-4dcd-a9b0-76fd6c2dbbbb",
+                "parentId": "eae9e487-57e4-4b00-a658-76fa042d9d41",
+                "userId": "845c01ca-35ca-4ab9-a381-2a80cc531d52",
+                "topicName": "Bingo",
+                "childIds": [],
+                "documentId": null,
+                "createTimestamp": "2022-12-19T21:38:19.722",
+                "updateTimestamp": "2022-12-19T21:38:19.722",
+                "allTopics": [],
+                "childTopics": []
             }
         ]
     }
-    }
-    """
-
-    assert send_and_recv(socket, "create|subject|#uuid|#json|\r\n") ==
-             "OK\r\n"
-
+      }
+      """
+    
+    data = String.replace(json, ~r/\s\s+/, " ")
+    data = String.replace(json, "\n", " ")
+    IO.inspect("Head:")
+    
+    [head|tail] = Regex.scan(~r/(.|\n){1,1200}/, data)
+    head = Enum.at(tail, 9)
+    IO.inspect(length(tail))
+    assert send_and_recv(socket, "create|subject|\r\n") ==
+             "OK|CREATE\r\n"
+    assert send_and_recv(socket, "put|subject|#{uuid}|#{head}|\r\n") == 
+             "OK|PUT|\r\n"
     # GET returns two lines
-    assert send_and_recv(socket, "get|subject|#uuid|\r\n") == "#json\r\n"
-    IO.inspect(socket)
+    assert send_and_recv(socket, "get|subject|#{uuid}|\r\n") == "OK|#{head}|\r\n"
     assert send_and_recv(socket, "") == "OK\r\n"
   end
 
