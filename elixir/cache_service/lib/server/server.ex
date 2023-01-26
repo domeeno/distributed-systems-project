@@ -27,12 +27,18 @@ defmodule Cache.Server do
   end
 
   defp read_line(socket) do
-    {:ok, data} = :gen_tcp.recv(socket, 0)
-    [chunk, size, command] = String.split(data, "|", parts: 3)
-    if (chunk==size) do
-      {:ok, command}
-    else
-      {:ok, read_line_chunks(command, socket)}
+    response = :gen_tcp.recv(socket, 0)
+    case response do
+      {:ok, data} ->
+        IO.inspect(response)
+        [chunk, size, command] = String.split(data, "|", parts: 3)
+        if (chunk==size) do
+          {:ok, command}
+        else
+          {:ok, read_line_chunks(command, socket)}
+        end
+      # MATCH EVERYTHING ELSE WITH !:ok
+      _ -> response
     end
   end
 
