@@ -30,15 +30,16 @@ defmodule Cache.CacheServer do
 
     # [chunks, number_of_chunks]
     chunk_data = data_to_chunks(data)
-    
+
     result = send_chunks(socket, bucket, key, chunk_data)
 
     case result do
-      {:ok, response} -> 
-        Logger.info("Cached: " <> key )
+      {:ok, response} ->
+        Logger.info("Cached: " <> key)
         {:reply, response, state}
+
       # error handling
-      _ -> 
+      _ ->
         Logger.info("Couldn't update cache for: " <> key)
         {:reply, "error", state}
     end
@@ -49,8 +50,9 @@ defmodule Cache.CacheServer do
     {:ok, socket} = :gen_tcp.connect('#{state.address}', state.port, opts)
 
     operation = "0|0|get|#{bucket}|#{key}|\r\n"
-    response = send_and_recv(socket, operation)
-    _ = send_and_recv(socket, "")
+    :ok = :gen_tcp.send(socket, operation)
+
+    response = receive_data(socket, "")
 
     case String.split(response, "|") do
       ["OK", "NOT FOUND", _] ->
@@ -65,6 +67,16 @@ defmodule Cache.CacheServer do
     end
   end
 
+  defp receive_data(socket, data) do
+    {:ok, response} = :gen_tcp.recv(socket, 0)
+    IO.inspect(response)
+
+    case response do
+      "OK\r\n" -> data
+      _ -> receive_data(socket, data <> response)
+    end
+  end
+
   defp send_recv_chunk(socket, bucket, key, data) do
     operation = "0|0|put|#{bucket}|#{key}|#{data}|\r\n"
     response = send_and_recv(socket, operation)
@@ -74,9 +86,9 @@ defmodule Cache.CacheServer do
 
   defp send_chunks(socket, bucket, key, [chunks, number_of_chunks]) do
     if number_of_chunks == 1 do
-      result = send_recv_chunk(socket, bucket, key, hd(chunks))            
+      result = send_recv_chunk(socket, bucket, key, hd(chunks))
       {:ok, result}
-    # handle multiple chunks
+      # handle multiple chunks
     else
       operation = "1|#{number_of_chunks}|put|#{bucket}|#{key}|#{hd(chunks)}\r\n"
       Logger.info("Sending chunk - " <> "1" <> "/" <> Integer.to_string(number_of_chunks))
@@ -88,23 +100,30 @@ defmodule Cache.CacheServer do
 
   defp send_chunk(socket, [head | tail], number_of_chunks, chunk_number) do
     operation = "#{chunk_number}|#{number_of_chunks}|#{head}"
-    Logger.info("Sending chunk - " <> Integer.to_string(chunk_number) <> "/" <> Integer.to_string(number_of_chunks))
+
+    Logger.info(
+      "Sending chunk - " <>
+        Integer.to_string(chunk_number) <> "/" <> Integer.to_string(number_of_chunks)
+    )
+
     IO.inspect("...")
+
     if length(tail) != 1 do
       send_to(socket, operation <> "|\r\n")
-    else 
+    else
       send_to(socket, operation <> "|\r\n")
     end
+
     IO.inspect("chunk " <> Integer.to_string(chunk_number) <> " sent")
     send_chunk(socket, tail, number_of_chunks, chunk_number + 1)
   end
 
   defp send_chunk(socket, [], _number_of_chunks, _chunk_number) do
-      IO.inspect("waiting response.... ")
-      response = :gen_tcp.recv(socket, 0, 1000)
-      IO.inspect(response)
-      :gen_tcp.close(socket)
-      response
+    IO.inspect("waiting response.... ")
+    response = :gen_tcp.recv(socket, 0, 1000)
+    IO.inspect(response)
+    :gen_tcp.close(socket)
+    response
   end
 
   defp data_to_chunks(data) do
