@@ -9,7 +9,7 @@ defmodule Cache.Parser do
     {:ok, {:create, "bucket"}}
 
 
-    iex> Cache.Parser.parse("put|bucket|key|valuer|\r\n")
+    iex> Cache.Parser.parse("put|bucket|key|value|\r\n")
     {:ok, {:put, "bucket", "key", "value"}}
 
     iex> Cache.Parser.parse("get|bucket|key|\r\n")
@@ -21,9 +21,6 @@ defmodule Cache.Parser do
     iex> 
   """
   def parse(line) do
-    IO.inspect(line)
-    IO.puts("\n\n FINISH LINE \n\n")
-
     case String.split(line, "|") do
       ["create", bucket, _endclause] -> {:ok, {:create, bucket}}
       ["put", bucket, key, value, _endclause] -> {:ok, {:put, bucket, key, value}}
@@ -58,7 +55,6 @@ defmodule Cache.Parser do
   def run({:put, bucket, key, value}) do
     lookup(bucket, fn pid ->
       Cache.Bucket.put(pid, key, value)
-      # IO.inspect(value)
       {:ok, "OK|PUT|\r\n"}
     end)
   end

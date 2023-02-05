@@ -19,26 +19,31 @@ defmodule Cache.Server do
       with {:ok, data} <- read_line(socket),
            {:ok, operation} <- Cache.Parser.parse(data),
            do: Cache.Parser.run(operation)
-
+    Logger.info("Command parsed. Finished.")
     write_line(socket, msg)
     serve(socket)
   end
 
   defp read_line(socket) do
+    Logger.info("Receiving data")
     response = :gen_tcp.recv(socket, 0)
 
     case response do
       {:ok, data} ->
-        IO.inspect(response)
         [chunk, size, command] = String.split(data, "|", parts: 3)
 
         if chunk == size do
+          Logger.info("Received new command")
           {:ok, command}
         else
-          {:ok, read_line_chunks(command, socket)}
+          Logger.info("Received new multi-line command")
+
+          Logger.info("Receiving chunk - " <> "1" <> "/" <> size)
+          result = read_line_chunks(command, socket)
+          {:ok, result}
         end
 
-      # MATCH EVERYTHING ELSE WITH !:ok
+      # MATCH EVERYTHING ELSE THAT IS NOT {:ok}
       _ ->
         response
     end
@@ -46,12 +51,12 @@ defmodule Cache.Server do
 
   defp read_line_chunks(command, socket) do
     {:ok, data} = :gen_tcp.recv(socket, 0)
+    [chunk, size, next_chunk, _] = String.split(data, "|", parts: 4)
 
-    [chunk, size, next_chunk] = String.split(data, "|", parts: 3)
+    Logger.info("Receiving chunk - " <> chunk <> "/" <> size)
     command = String.replace(command, "\r\n", "") <> next_chunk
-
-    if chunk == size do
-      command
+    if String.to_integer(chunk) == String.to_integer(size) do
+      command <> "|"
     else
       read_line_chunks(command, socket)
     end

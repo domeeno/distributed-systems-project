@@ -28,20 +28,19 @@ defmodule Cache.CacheServer do
     opts = [:binary, packet: :line, active: false]
     {:ok, socket} = :gen_tcp.connect('#{state.address}', state.port, opts)
 
-    # chunk
-    [chunks, number_of_chunks] = data_to_chunks(data)
+    # [chunks, number_of_chunks]
+    chunk_data = data_to_chunks(data)
+    
+    result = send_chunks(socket, bucket, key, chunk_data)
 
-    IO.inspect("here yes")
-    # send_chunkz
-    if number_of_chunks == 1 do
-      response = send_recv_chunk(socket, bucket, key, hd(chunks))
-      log_response(String.split(response, "|"), bucket, key)
-      {:reply, response, state}
-    else
-      response = send_chunks(socket, bucket, key, chunks, number_of_chunks)
-      IO.inspect("HEERERERRE???? <> " <> response)
-      log_response(String.split(response, "|"), bucket, key)
-      {:reply, response, state}
+    case result do
+      {:ok, response} -> 
+        Logger.info("Cached: " <> key )
+        {:reply, response, state}
+      # error handling
+      _ -> 
+        Logger.info("Couldn't update cache for: " <> key)
+        {:reply, "error", state}
     end
   end
 
@@ -70,31 +69,42 @@ defmodule Cache.CacheServer do
     operation = "0|0|put|#{bucket}|#{key}|#{data}|\r\n"
     response = send_and_recv(socket, operation)
     :gen_tcp.close(socket)
-    IO.inspect("HEREEE?????")
     response
   end
 
-  defp send_chunks(socket, bucket, key, [head | tail], number_of_chunks) do
-    operation = "1|#{number_of_chunks}|put|#{bucket}|#{key}|#{head}\r\n"
-    :ok = :gen_tcp.send(socket, operation)
-    result = send_chunk(socket, tail, number_of_chunks, 2)
-    IO.inspect("Hdsoajdsad?" <> result)
-    result
+  defp send_chunks(socket, bucket, key, [chunks, number_of_chunks]) do
+    if number_of_chunks == 1 do
+      result = send_recv_chunk(socket, bucket, key, hd(chunks))            
+      {:ok, result}
+    # handle multiple chunks
+    else
+      operation = "1|#{number_of_chunks}|put|#{bucket}|#{key}|#{hd(chunks)}\r\n"
+      Logger.info("Sending chunk - " <> "1" <> "/" <> Integer.to_string(number_of_chunks))
+      :ok = :gen_tcp.send(socket, operation)
+      result = send_chunk(socket, tl(chunks), number_of_chunks, 2)
+      {:ok, result}
+    end
   end
 
   defp send_chunk(socket, [head | tail], number_of_chunks, chunk_number) do
     operation = "#{chunk_number}|#{number_of_chunks}|#{head}"
-    IO.inspect(operation)
+    Logger.info("Sending chunk - " <> Integer.to_string(chunk_number) <> "/" <> Integer.to_string(number_of_chunks))
+    IO.inspect("...")
+    if length(tail) != 1 do
+      send_to(socket, operation <> "|\r\n")
+    else 
+      send_to(socket, operation <> "|\r\n")
+    end
+    IO.inspect("chunk " <> Integer.to_string(chunk_number) <> " sent")
+    send_chunk(socket, tail, number_of_chunks, chunk_number + 1)
+  end
 
-    if number_of_chunks != chunk_number do
-      send_to(socket, operation <> "\r\n")
-      send_chunk(socket, tail, number_of_chunks, chunk_number + 1)
-    else
-      IO.inspect("not cool bro " <> operation)
-      response = send_and_recv(socket, operation <> "|\r\n")
+  defp send_chunk(socket, [], _number_of_chunks, _chunk_number) do
+      IO.inspect("waiting response.... ")
+      response = :gen_tcp.recv(socket, 0, 1000)
+      IO.inspect(response)
       :gen_tcp.close(socket)
       response
-    end
   end
 
   defp data_to_chunks(data) do
