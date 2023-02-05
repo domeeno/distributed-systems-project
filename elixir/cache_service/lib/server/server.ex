@@ -19,6 +19,7 @@ defmodule Cache.Server do
       with {:ok, data} <- read_line(socket),
            {:ok, operation} <- Cache.Parser.parse(data),
            do: Cache.Parser.run(operation)
+
     Logger.info("Command parsed. Finished.")
     write_line(socket, msg)
     serve(socket)
@@ -55,6 +56,7 @@ defmodule Cache.Server do
 
     Logger.info("Receiving chunk - " <> chunk <> "/" <> size)
     command = String.replace(command, "\r\n", "") <> next_chunk
+
     if String.to_integer(chunk) == String.to_integer(size) do
       command <> "|"
     else
