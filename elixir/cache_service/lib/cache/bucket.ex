@@ -37,6 +37,7 @@ defmodule Cache.Bucket do
   defp clean(bucket) do
     keys = get_keys(bucket)
     keys_length = length(keys)
+
     if keys_length >= @allowed_overhead + @optimal_nr_entries do
       Logger.info("Cache cleanup...")
       delete_key(bucket, keys, keys_length - @optimal_nr_entries)
@@ -46,6 +47,7 @@ defmodule Cache.Bucket do
   def clean_timer(bucket) do
     keys = get_keys(bucket)
     keys_length = length(keys)
+
     if keys_length > @optimal_nr_entries do
       Logger.info("Cache cleanup...")
       delete_key(bucket, keys, keys_length - @optimal_nr_entries)

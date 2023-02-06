@@ -8,7 +8,6 @@ defmodule Cache.Cleaner do
   end
 
   def handle_info(:clean, state) do
-    
     Cache.Bucket.clean_timer(state.bucket)
     {:noreply, state}
   end

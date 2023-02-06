@@ -10,11 +10,19 @@ defmodule Cache.CacheServer do
 
   def init(args) do
     opts = [:binary, packet: :line, active: false]
-    {:ok, socket} = :gen_tcp.connect('#{args.address}', args.port, opts)
-    Logger.info("Established connection with Cache server at #{args.address}:#{args.port}")
-    _ = send_and_recv(socket, "0|0|create|subject|\r\n")
-    _ = send_and_recv(socket, "0|0|create|file|\r\n")
-    :gen_tcp.close(socket)
+
+    case :gen_tcp.connect('#{args.address}', args.port, opts) do
+      {:ok, socket} ->
+        Logger.info("Established connection with Cache server at #{args.address}:#{args.port}")
+        _ = send_and_recv(socket, "0|0|create|subject|\r\n")
+        _ = send_and_recv(socket, "0|0|create|file|\r\n")
+        :gen_tcp.close(socket)
+
+      {:error, reason} ->
+        Logger.error(
+          "Couldn't connect to Cache Server at #{args.address}:#{args.port}, reason: #{reason}"
+        )
+    end
 
     {:ok,
      %{
