@@ -1,9 +1,10 @@
 defmodule Cache.Bucket do
   use Agent, restart: :temporary
 
-  @interval 5 * 1000
-  @allowed_overhead 20
-  @optimal_nr_entries 30
+  @caching Application.compile_env!(:cache_service, :caching)
+  @interval @caching.interval
+  @allowed_overhead @caching.allowed_overhead
+  @optimal_nr_entries @caching.optimal_nr_entries
 
   def start_link(_opts) do
     {:ok, pid} = Agent.start_link(fn -> %{} end)
