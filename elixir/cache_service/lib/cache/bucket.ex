@@ -1,5 +1,6 @@
 defmodule Cache.Bucket do
   use Agent, restart: :temporary
+  require Logger
 
   @caching Application.compile_env!(:cache_service, :caching)
   @interval @caching.interval
@@ -8,7 +9,7 @@ defmodule Cache.Bucket do
 
   def start_link(_opts) do
     {:ok, pid} = Agent.start_link(fn -> %{} end)
-    # GenServer.start_link(Cache.Cleaner, {pid, @interval})
+    GenServer.start_link(Cache.Cleaner, {pid, @interval})
     {:ok, pid}
   end
 
@@ -18,6 +19,7 @@ defmodule Cache.Bucket do
 
   def put(bucket, key, value) do
     if(length(get_keys(bucket)) >= @allowed_overhead + @optimal_nr_entries) do
+      Logger.warn("Cache exceeded allowed limit")
       clean(bucket)
     end
 
@@ -32,15 +34,26 @@ defmodule Cache.Bucket do
     Agent.get(bucket, &Map.keys(&1))
   end
 
-  def clean(bucket) do
-    IO.inspect("Cleanup...")
+  defp clean(bucket) do
     keys = get_keys(bucket)
     keys_length = length(keys)
-    delete_key(bucket, keys, keys_length - @optimal_nr_entries)
+    if keys_length >= @allowed_overhead + @optimal_nr_entries do
+      Logger.info("Cache cleanup...")
+      delete_key(bucket, keys, keys_length - @optimal_nr_entries)
+    end
   end
 
-  defp delete_key(bucket, _remaining_data, 0) do
-    IO.inspect(get_keys(bucket))
+  def clean_timer(bucket) do
+    keys = get_keys(bucket)
+    keys_length = length(keys)
+    if keys_length > @optimal_nr_entries do
+      Logger.info("Cache cleanup...")
+      delete_key(bucket, keys, keys_length - @optimal_nr_entries)
+    end
+  end
+
+  defp delete_key(_bucket, _remaining_data, 0) do
+    Logger.info("Cache cleanup done ✓")
   end
 
   defp delete_key(bucket, [head | tail], counter) do
