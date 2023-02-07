@@ -11,42 +11,65 @@ defmodule Cache.CacheServer do
   def init(args) do
     opts = [:binary, packet: :line, active: false]
 
-    case :gen_tcp.connect('#{args.address}', args.port, opts) do
+    case connect_socket(args.address, args.port, opts) do
       {:ok, socket} ->
-        Logger.info("Established connection with Cache server at #{args.address}:#{args.port}")
-        _ = send_and_recv(socket, "0|0|create|subject|\r\n")
-        _ = send_and_recv(socket, "0|0|create|file|\r\n")
+        IO.inspect(socket)
         :gen_tcp.close(socket)
 
-      {:error, reason} ->
-        Logger.error(
-          "Couldn't connect to Cache Server at #{args.address}:#{args.port}, reason: #{reason}"
-        )
+      _ ->
+        {}
     end
 
     {:ok,
      %{
        address: '#{args.address}',
        port: args.port,
-       opts: opts
+       opts: opts,
+       buckets: []
      }}
+  end
+
+  def handle_call({:buckets}, _from, state) do
+    {:reply, state.buckets, state}
   end
 
   def handle_call({:update, bucket, key, data}, _from, state) do
     opts = [:binary, packet: :line, active: false]
-    {:ok, socket} = :gen_tcp.connect('#{state.address}', state.port, opts)
 
-    # [chunks, number_of_chunks]
-    chunk_data = data_to_chunks(data)
+    case connect_socket(state.address, state.port, opts) do
+      {:ok, socket} ->
+        IO.inspect(state)
 
-    result = send_chunks(socket, bucket, key, chunk_data)
+        if !Enum.member?(state.buckets, bucket) do
+          case create_bucket(bucket, socket) do
+            {:ok, response} -> IO.inspect(Map.put(state, :buckets, [response | state.buckets]))
+            {:error} -> []
+          end
+        end
 
-    case result do
-      {:ok, response} ->
-        Logger.info("Cached: " <> key)
-        {:reply, response, state}
+        IO.inspect(state)
 
-      # error handling
+        if Enum.member?(state.buckets, bucket) do
+          # [chunks, number_of_chunks]
+          chunk_data = data_to_chunks(data)
+
+          result = send_chunks(socket, bucket, key, chunk_data)
+
+          case result do
+            {:ok, response} ->
+              Logger.info("Cached: " <> key)
+              {:reply, response, state}
+
+            # error handling
+            _ ->
+              Logger.info("Couldn't update cache for: " <> key)
+              {:reply, "error", state}
+          end
+        else
+          :gen_tcp.close(socket)
+          {:reply, "error", state}
+        end
+
       _ ->
         Logger.info("Couldn't update cache for: " <> key)
         {:reply, "error", state}
@@ -55,23 +78,75 @@ defmodule Cache.CacheServer do
 
   def handle_call({:query, bucket, key}, _from, state) do
     opts = [:binary, packet: :line, active: false]
-    {:ok, socket} = :gen_tcp.connect('#{state.address}', state.port, opts)
 
-    operation = "0|0|get|#{bucket}|#{key}|\r\n"
-    :ok = :gen_tcp.send(socket, operation)
+    case connect_socket(state.address, state.port, opts) do
+      {:ok, socket} ->
+        IO.inspect(state)
 
-    response = receive_data(socket, "")
+        if !Enum.member?(state.buckets, bucket) do
+          case create_bucket(bucket, socket) do
+            {:ok, response} -> IO.inspect(Map.put(state, :buckets, [response | state.buckets]))
+            {:error} -> []
+          end
+        end
 
-    case String.split(response, "|") do
-      ["OK", "NOT FOUND", _] ->
+        IO.inspect(state)
+
+        if Enum.member?(state.buckets, bucket) do
+          operation = "0|0|get|#{bucket}|#{key}|\r\n"
+          :ok = :gen_tcp.send(socket, operation)
+
+          response = receive_data(socket, "")
+
+          case String.split(response, "|") do
+            ["OK", "NOT FOUND", _] ->
+              {:reply, {:not_found}, state}
+
+            ["OK", data, _] ->
+              {:reply, {:found, data}, state}
+
+            ["ERROR", "BAD REQUEST", _] ->
+              Logger.error("Error getting in #{bucket}: #{key}")
+              {:reply, {:not_found}, state}
+          end
+        else
+          :gen_tcp.close(socket)
+
+          {:reply, {:not_found}, state}
+        end
+
+      _ ->
+        Logger.info("Couldn't update cache for: " <> key)
         {:reply, {:not_found}, state}
+    end
+  end
 
-      ["OK", data, _] ->
-        {:reply, {:found, data}, state}
+  defp create_bucket(bucket, socket) do
+    response = send_and_recv(socket, "0|0|create|#{bucket}|\r\n")
+    IO.inspect(response)
+
+    case response do
+      "OK|CREATE\r\n" ->
+        Logger.info("#{response} - Created bucket: #{bucket}")
+        {:ok, bucket}
 
       ["ERROR", "BAD REQUEST", _] ->
-        Logger.error("Error getting in #{bucket}: #{key}")
-        {:reply, {:not_found}, state}
+        Logger.error("Couldn't create bucket: #{bucket}")
+        {:error}
+    end
+  end
+
+  defp connect_socket(address, port, opts) do
+    connection = :gen_tcp.connect('#{address}', port, opts)
+
+    case connection do
+      {:ok, socket} ->
+        Logger.info("Established connection with Cache server at #{address}:#{port}")
+        {:ok, socket}
+
+      {:error, reason} ->
+        Logger.error("Couldn't connect to Cache Server at #{address}:#{port}, reason: #{reason}")
+        {:error}
     end
   end
 
