@@ -1,29 +1,31 @@
 defmodule Cache.Parser do
+  require Logger
+
   @doc ~S"""
   Parses queries from gateway service.
 
   ## Example
-    iex> Cache.Parser.parse("create bucket key value \r\n")
-    {:ok, {:create, "bucket", "key", "value"}}
+    iex> Cache.Parser.parse("create|bucket|\r\n")
+    {:ok, {:create, "bucket"}}
 
 
-    iex> Cache.Parser.parse("put bucket key value \r\n")
+    iex> Cache.Parser.parse("put|bucket|key|value|\r\n")
     {:ok, {:put, "bucket", "key", "value"}}
 
-    iex> Cache.Parser.parse("get bucket key ")
+    iex> Cache.Parser.parse("get|bucket|key|\r\n")
     {:ok, {:get, "bucket", "key"}}
 
-    iex> Cache.Parser.parse("del bucket key ")
+    iex> Cache.Parser.parse("del|bucket|key|\r\n")
     {:ok, {:del, "bucket", "key", "value"}}
 
     iex> 
   """
   def parse(line) do
-    case String.split(line) do
-      ["create", bucket, key, value] -> {:ok, {:create, bucket, key, value}}
-      ["put", bucket, key, value] -> {:ok, {:put, bucket, key, value}}
-      ["get", bucket, key] -> {:ok, {:get, bucket, key}}
-      ["del", bucket, key] -> {:ok, {:del, bucket, key}}
+    case String.split(line, "|") do
+      ["create", bucket, _endclause] -> {:ok, {:create, bucket}}
+      ["put", bucket, key, value, _endclause] -> {:ok, {:put, bucket, key, value}}
+      ["get", bucket, key, _endclause] -> {:ok, {:get, bucket, key}}
+      ["del", bucket, key, _endclause] -> {:ok, {:del, bucket, key}}
       _ -> {:error, :bad_operation}
     end
   end
@@ -33,34 +35,34 @@ defmodule Cache.Parser do
   """
   def run(operation)
 
-  def run({:create, bucket, key, value}) do
+  def run({:create, bucket}) do
     Cache.Registry.create(Cache.Registry, bucket)
-    IO.puts("OK THIS WORKS!!!")
-
-    lookup(bucket, fn pid ->
-      Cache.Bucket.put(pid, key, value)
-      {:ok, "OK\r\n"}
-    end)
+    # Logger.info("Created bucket: #{bucket}")
+    {:ok, "OK|CREATE\r\n"}
   end
 
   def run({:get, bucket, key}) do
     lookup(bucket, fn pid ->
       value = Cache.Bucket.get(pid, key)
-      {:ok, "#{value}\r\nOK\r\n"}
+
+      case value do
+        nil -> {:ok, "OK|NOT FOUND|\r\nOK\r\n"}
+        _ -> {:ok, "OK|#{value}|\r\nOK\r\n"}
+      end
     end)
   end
 
   def run({:put, bucket, key, value}) do
     lookup(bucket, fn pid ->
       Cache.Bucket.put(pid, key, value)
-      {:ok, "OK\r\n"}
+      {:ok, "OK|PUT|\r\n"}
     end)
   end
 
   def run({:del, bucket, key}) do
     lookup(bucket, fn pid ->
       Cache.Bucket.delete(pid, key)
-      {:ok, "OK\r\n"}
+      {:ok, "OK|DEL|\r\n"}
     end)
   end
 
