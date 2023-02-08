@@ -38,18 +38,22 @@ defmodule Cache.CacheServer do
 
     case connect_socket(state.address, state.port, opts) do
       {:ok, socket} ->
-        IO.inspect(state)
+        bucket_list =
+          if !Enum.member?(state.buckets, bucket) do
+            result = create_bucket(bucket, socket)
 
-        if !Enum.member?(state.buckets, bucket) do
-          case create_bucket(bucket, socket) do
-            {:ok, response} -> IO.inspect(Map.put(state, :buckets, [response | state.buckets]))
-            {:error} -> []
+            case result do
+              {:ok, bucket} ->
+                [bucket | state.buckets]
+
+              {:error} ->
+                state.buckets
+            end
+          else
+            state.buckets
           end
-        end
 
-        IO.inspect(state)
-
-        if Enum.member?(state.buckets, bucket) do
+        if Enum.member?(bucket_list, bucket) do
           # [chunks, number_of_chunks]
           chunk_data = data_to_chunks(data)
 
@@ -58,12 +62,12 @@ defmodule Cache.CacheServer do
           case result do
             {:ok, response} ->
               Logger.info("Cached: " <> key)
-              {:reply, response, state}
+              {:reply, response, Map.put(state, :buckets, bucket_list)}
 
             # error handling
             _ ->
               Logger.info("Couldn't update cache for: " <> key)
-              {:reply, "error", state}
+              {:reply, "error", Map.put(state, :buckets, bucket_list)}
           end
         else
           :gen_tcp.close(socket)
@@ -78,45 +82,22 @@ defmodule Cache.CacheServer do
 
   def handle_call({:query, bucket, key}, _from, state) do
     opts = [:binary, packet: :line, active: false]
+    {:ok, socket} = :gen_tcp.connect('#{state.address}', state.port, opts)
 
-    case connect_socket(state.address, state.port, opts) do
-      {:ok, socket} ->
-        IO.inspect(state)
+    operation = "0|0|get|#{bucket}|#{key}|\r\n"
+    :ok = :gen_tcp.send(socket, operation)
 
-        if !Enum.member?(state.buckets, bucket) do
-          case create_bucket(bucket, socket) do
-            {:ok, response} -> IO.inspect(Map.put(state, :buckets, [response | state.buckets]))
-            {:error} -> []
-          end
-        end
+    response = receive_data(socket, "")
 
-        IO.inspect(state)
+    case String.split(response, "|") do
+      ["OK", "NOT FOUND", _] ->
+        {:reply, {:not_found}, state}
 
-        if Enum.member?(state.buckets, bucket) do
-          operation = "0|0|get|#{bucket}|#{key}|\r\n"
-          :ok = :gen_tcp.send(socket, operation)
+      ["OK", data, _] ->
+        {:reply, {:found, data}, state}
 
-          response = receive_data(socket, "")
-
-          case String.split(response, "|") do
-            ["OK", "NOT FOUND", _] ->
-              {:reply, {:not_found}, state}
-
-            ["OK", data, _] ->
-              {:reply, {:found, data}, state}
-
-            ["ERROR", "BAD REQUEST", _] ->
-              Logger.error("Error getting in #{bucket}: #{key}")
-              {:reply, {:not_found}, state}
-          end
-        else
-          :gen_tcp.close(socket)
-
-          {:reply, {:not_found}, state}
-        end
-
-      _ ->
-        Logger.info("Couldn't update cache for: " <> key)
+      ["ERROR", "BAD REQUEST", _] ->
+        Logger.error("Error getting in #{bucket}: #{key}")
         {:reply, {:not_found}, state}
     end
   end
@@ -152,10 +133,10 @@ defmodule Cache.CacheServer do
 
   defp receive_data(socket, data) do
     {:ok, response} = :gen_tcp.recv(socket, 0)
-    IO.inspect(response)
 
     case response do
       "OK\r\n" -> data
+      "OK|NOT FOUND|\r\n" -> response
       _ -> receive_data(socket, data <> response)
     end
   end
@@ -223,7 +204,6 @@ defmodule Cache.CacheServer do
   end
 
   defp send_and_recv(socket, command) do
-    IO.inspect("nice <>" <> command)
     :ok = :gen_tcp.send(socket, command)
     {:ok, data} = :gen_tcp.recv(socket, 0, 1000)
     IO.inspect("this is the ok message" <> data)
