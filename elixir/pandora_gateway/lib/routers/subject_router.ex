@@ -23,7 +23,6 @@ defmodule SubjectRouter do
   get "/:id" do
     case GenServer.call(:cache_server, {:query, "subject", id}) do
       {:found, data} ->
-        Logger.info("found cached subject: #{id}")
         respond(conn, 200, data)
 
       {:not_found} ->
