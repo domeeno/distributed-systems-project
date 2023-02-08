@@ -11,42 +11,69 @@ defmodule Cache.CacheServer do
   def init(args) do
     opts = [:binary, packet: :line, active: false]
 
-    case :gen_tcp.connect('#{args.address}', args.port, opts) do
+    case connect_socket(args.address, args.port, opts) do
       {:ok, socket} ->
-        Logger.info("Established connection with Cache server at #{args.address}:#{args.port}")
-        _ = send_and_recv(socket, "0|0|create|subject|\r\n")
-        _ = send_and_recv(socket, "0|0|create|file|\r\n")
+        IO.inspect(socket)
         :gen_tcp.close(socket)
 
-      {:error, reason} ->
-        Logger.error(
-          "Couldn't connect to Cache Server at #{args.address}:#{args.port}, reason: #{reason}"
-        )
+      _ ->
+        {}
     end
 
     {:ok,
      %{
        address: '#{args.address}',
        port: args.port,
-       opts: opts
+       opts: opts,
+       buckets: []
      }}
+  end
+
+  def handle_call({:buckets}, _from, state) do
+    {:reply, state.buckets, state}
   end
 
   def handle_call({:update, bucket, key, data}, _from, state) do
     opts = [:binary, packet: :line, active: false]
-    {:ok, socket} = :gen_tcp.connect('#{state.address}', state.port, opts)
 
-    # [chunks, number_of_chunks]
-    chunk_data = data_to_chunks(data)
+    case connect_socket(state.address, state.port, opts) do
+      {:ok, socket} ->
+        bucket_list =
+          if !Enum.member?(state.buckets, bucket) do
+            result = create_bucket(bucket, socket)
 
-    result = send_chunks(socket, bucket, key, chunk_data)
+            case result do
+              {:ok, bucket} ->
+                [bucket | state.buckets]
 
-    case result do
-      {:ok, response} ->
-        Logger.info("Cached: " <> key)
-        {:reply, response, state}
+              {:error} ->
+                state.buckets
+            end
+          else
+            state.buckets
+          end
 
-      # error handling
+        if Enum.member?(bucket_list, bucket) do
+          # [chunks, number_of_chunks]
+          chunk_data = data_to_chunks(data)
+
+          result = send_chunks(socket, bucket, key, chunk_data)
+
+          case result do
+            {:ok, response} ->
+              Logger.info("Cached: " <> key)
+              {:reply, response, Map.put(state, :buckets, bucket_list)}
+
+            # error handling
+            _ ->
+              Logger.info("Couldn't update cache for: " <> key)
+              {:reply, "error", Map.put(state, :buckets, bucket_list)}
+          end
+        else
+          :gen_tcp.close(socket)
+          {:reply, "error", state}
+        end
+
       _ ->
         Logger.info("Couldn't update cache for: " <> key)
         {:reply, "error", state}
@@ -75,12 +102,41 @@ defmodule Cache.CacheServer do
     end
   end
 
-  defp receive_data(socket, data) do
-    {:ok, response} = :gen_tcp.recv(socket, 0)
+  defp create_bucket(bucket, socket) do
+    response = send_and_recv(socket, "0|0|create|#{bucket}|\r\n")
     IO.inspect(response)
 
     case response do
+      "OK|CREATE\r\n" ->
+        Logger.info("#{response} - Created bucket: #{bucket}")
+        {:ok, bucket}
+
+      ["ERROR", "BAD REQUEST", _] ->
+        Logger.error("Couldn't create bucket: #{bucket}")
+        {:error}
+    end
+  end
+
+  defp connect_socket(address, port, opts) do
+    connection = :gen_tcp.connect('#{address}', port, opts)
+
+    case connection do
+      {:ok, socket} ->
+        Logger.info("Established connection with Cache server at #{address}:#{port}")
+        {:ok, socket}
+
+      {:error, reason} ->
+        Logger.error("Couldn't connect to Cache Server at #{address}:#{port}, reason: #{reason}")
+        {:error}
+    end
+  end
+
+  defp receive_data(socket, data) do
+    {:ok, response} = :gen_tcp.recv(socket, 0)
+
+    case response do
       "OK\r\n" -> data
+      "OK|NOT FOUND|\r\n" -> response
       _ -> receive_data(socket, data <> response)
     end
   end
@@ -148,7 +204,6 @@ defmodule Cache.CacheServer do
   end
 
   defp send_and_recv(socket, command) do
-    IO.inspect("nice <>" <> command)
     :ok = :gen_tcp.send(socket, command)
     {:ok, data} = :gen_tcp.recv(socket, 0, 1000)
     IO.inspect("this is the ok message" <> data)
