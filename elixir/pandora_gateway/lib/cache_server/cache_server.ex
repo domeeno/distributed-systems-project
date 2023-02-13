@@ -81,7 +81,7 @@ defmodule Cache.CacheServer do
 
   def handle_call({:query, bucket, key}, _from, state) do
     opts = [:binary, packet: :line, active: false]
-    {:ok, socket} = :gen_tcp.connect('#{state.address}', state.port, opts)
+    {:ok, socket} = connect_socket('#{state.address}', state.port, opts)
 
     operation = "0|0|get|#{bucket}|#{key}|\r\n"
     :ok = :gen_tcp.send(socket, operation)

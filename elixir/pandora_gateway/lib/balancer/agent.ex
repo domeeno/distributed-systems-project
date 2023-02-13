@@ -5,28 +5,34 @@ defmodule LoadBalancer.Agent do
   def start_link(args) do
     {:ok, pid} = GenServer.start_link(__MODULE__, args, name: String.to_atom(args.service))
     Registry.register(Registry.ViaTest, args.service, pid)
-    Logger.info("Load Balancer for #{args.service} at address #{args.address} started")
+    Logger.info("Load Balancer for #{args.service} started")
     {:ok, pid}
   end
 
   def init(args) do
     {:ok,
      %{
-       :ports => args.ports,
-       :address => args.address,
-       :port_index => 0,
-       :alive_services => args.ports
+       :addrs => [],
+       :addr_index => 0,
+       :alive_addrs => []
      }}
   end
 
+  def handle_call({:register, service, address}, _from, state) do
+    Logger.info("Registering address for #{service} service: #{address}")
+    {:reply, :ok, Map.put(state, :alive_addrs, [address | state.addrs])}
+  end
+
   def handle_call({:get_request, url}, _from, state) do
-    address = state.address <> ":" <> Enum.at(state.alive_services, state.port_index) <> url
+    address = Enum.at(state.alive_addrs, state.addr_index) <> url
+    IO.inspect(address)
     response = HTTPoison.get(address)
-    {:reply, response, Map.put(state, :port_index, switch_port(state))}
+    IO.inspect(response)
+    {:reply, response, Map.put(state, :addr_index, switch_port(state))}
   end
 
   def handle_call({:post_request, url, params}, _from, state) do
-    address = state.address <> ":" <> Enum.at(state.alive_services, state.port_index) <> url
+    address = Enum.at(state.alive_addrs, state.addr_index) <> url
     IO.inspect(address)
 
     response =
@@ -34,14 +40,14 @@ defmodule LoadBalancer.Agent do
         {"Content-Type", "application/json"}
       ])
 
-    {:reply, response, Map.put(state, :port_index, switch_port(state))}
+    {:reply, response, Map.put(state, :addr_index, switch_port(state))}
   end
 
   defp switch_port(state) do
-    if state.port_index + 1 > length(state.alive_services) - 1 do
+    if state.addr_index + 1 > length(state.alive_addrs) - 1 do
       0
     else
-      state.port_index + 1
+      state.addr_index + 1
     end
   end
 end
