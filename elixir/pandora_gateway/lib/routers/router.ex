@@ -26,6 +26,9 @@ defmodule Gateway.Router do
     |> send_resp(200, "all good")
   end
 
+  # service discovery
+  forward("/service", to: ServiceRouter)
+
   # userservice
   forward("/user", to: UserRouter)
 

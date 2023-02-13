@@ -20,6 +20,18 @@ defmodule UserRouter do
 
   plug(:dispatch)
 
+  get ":user_id/info" do
+    {status, body} =
+      handle_response(
+        GenServer.call(
+          :userservice,
+          {:get_request, "user/#{user_id}/info"}
+        )
+      )
+
+    respond(conn, status, body)
+  end
+
   post "/register" do
     {status, body} =
       handle_response(
@@ -54,8 +66,7 @@ defmodule UserRouter do
         {404, "Not found :("}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        # TODO replace with logger
-        IO.inspect(reason)
+        Logger.error(reason)
         {500, "Something went wrong"}
     end
   end
