@@ -1,5 +1,6 @@
-FROM elixir
+FROM elixir:1.14.3-alpine
 WORKDIR /pandora_gateway
+
 COPY . .
 
 RUN mix local.hex --force

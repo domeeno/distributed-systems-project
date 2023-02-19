@@ -1,6 +1,7 @@
-FROM elixir
+FROM elixir:1.14.3-alpine
 WORKDIR /cache_service
-COPY . .
+
+COPY . . 
 
 RUN mix local.hex --force
 RUN mix deps.get
