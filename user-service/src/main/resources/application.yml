@@ -14,6 +14,9 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
     generate-ddl: true
+
+  banner:
+    location: classpath:banner.txt
 server:
   port: 8080
 
@@ -25,3 +28,5 @@ pandora:
   services:
     course-service:
       url: "http://localhost:8082"
+    gateway:
+      url: "http://localhost:4000"
