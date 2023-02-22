@@ -44,12 +44,12 @@ class GraphLookupRepository(
     }
 
     private fun nestTree(topicTree: List<Topic>, allTopics: List<Topic>) {
-         for(topic in topicTree) {
-             topic.childTopics = allTopics.filter { it.id in topic.childIds }
+        for (topic in topicTree) {
+            topic.childTopics = allTopics.filter { it.id in topic.childIds }
 
-             if (!(topic.childTopics.none { it.childTopics.isEmpty() })) {
+            if (!(topic.childTopics.none { it.childTopics.isEmpty() })) {
                 nestTree(topic.childTopics, allTopics)
-             }
-         }
+            }
+        }
     }
 }

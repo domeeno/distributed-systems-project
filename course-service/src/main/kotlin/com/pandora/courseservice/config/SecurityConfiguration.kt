@@ -38,6 +38,7 @@ class SecurityConfiguration {
                         "http://user-service:8080",
                         "http://localhost:8083",
                         "http://localhost:4000",
+                        "http://gateway:4000"
                     )
             }
         }
