@@ -20,10 +20,11 @@ defmodule ServiceRouter do
 
   plug(:dispatch)
 
-  post "/:service" do
+  get "/:service" do
+    Logger.info("[DISCOVERY]: registering #{service} service")
     address =
       "http://" <>
-        to_string(:inet_parse.ntoa(conn.remote_ip)) <> ":" <> conn.params["port"] <> "/"
+        to_string(:inet_parse.ntoa(conn.remote_ip)) <> ":" <> conn.params["port"]
 
     case service do
       "subject" ->
@@ -39,7 +40,7 @@ defmodule ServiceRouter do
         GenServer.call(:cache, {:register, service, address})
 
       _ ->
-        Logger.info("Unregistered service discovery call: #{service}")
+        Logger.info("[DISCOVERY]: Unregistered service discovery call: #{service}")
     end
 
     respond(conn, 200, "Good")

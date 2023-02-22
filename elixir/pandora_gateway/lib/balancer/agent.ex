@@ -19,7 +19,7 @@ defmodule LoadBalancer.Agent do
   end
 
   def handle_call({:register, service, address}, _from, state) do
-    Logger.info("Registering address for #{service} service: #{address}")
+    Logger.info("[DISCOVERY]: Registering address for #{service} service: #{address}")
     {:reply, :ok, Map.put(state, :alive_addrs, [address | state.addrs])}
   end
 
