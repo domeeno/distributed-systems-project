@@ -34,6 +34,10 @@ class SecurityConfiguration {
             override fun addCorsMappings(registry: CorsRegistry) {
                 registry
                     .addMapping("/**")
+                    .allowedOrigins(
+                        "http://localhost:4000",
+                        "http://gateway:4000"
+                    )
             }
         }
     }

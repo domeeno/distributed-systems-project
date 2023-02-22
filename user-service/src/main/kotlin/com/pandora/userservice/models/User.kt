@@ -1,6 +1,5 @@
 package com.pandora.userservice.models
 
-import org.hibernate.annotations.Type
 import java.sql.Date
 import java.sql.Timestamp
 import java.util.UUID

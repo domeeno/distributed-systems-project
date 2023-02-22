@@ -1,6 +1,5 @@
 package com.pandora.userservice.repository
 
-import com.pandora.userservice.controllers.UserController
 import com.pandora.userservice.dto.UserEntryDTO
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -19,10 +18,9 @@ class CourseRepository {
 
     private val log = LoggerFactory.getLogger(CourseRepository::class.java)
 
-
     fun createNewUserEntry(userEntryDTO: UserEntryDTO): String {
 
-        log.info("Sending request to: $courseUrl/user/new")
+        log.info("Sending create request to: $courseUrl/user/new")
 
         val url = UriComponentsBuilder.fromHttpUrl("$courseUrl/user/new")
             .encode()
@@ -33,6 +31,8 @@ class CourseRepository {
     }
 
     fun deleteUserEntries(userEntryDTO: UserEntryDTO): String {
+        log.info("Sending delete request to: $courseUrl/user")
+
         val url = UriComponentsBuilder.fromHttpUrl("$courseUrl/user")
             .encode()
             .toUriString()

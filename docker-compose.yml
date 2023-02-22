@@ -1,84 +1,52 @@
 version: '3.1'
 
 services:
+  
+  gateway:
+    image: gatewaysd
+    ports:
+      - "4000:4000"
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - pandora
+    container_name: gateway
+
+  cache:
+    image: cachesd
+    ports:
+      - "4040:4040"
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - pandora
+    container_name: cache
 
   course-service:
-    build:
-      context: course-service
+    image: subjectsd
     ports:
-      - 8082:8082
+      - "8082:8082"
     depends_on:
       - mongo
+      - gateway
     cap_add:
       - NET_ADMIN
     networks:
       - pandora
     container_name: course-service
-  
-  course-service-a:
-    build:
-      context: course-service
-    ports:
-      - 8090:8082
-    depends_on:
-      - mongo
-    cap_add:
-      - NET_ADMIN
-    networks:
-      - pandora
-    container_name: course-service-b
 
-  course-service-b:
-    build:
-      context: course-service
-    ports:
-      - 8091:8082
-    depends_on:
-      - mongo
-    cap_add:
-      - NET_ADMIN
-    networks:
-      - pandora
-    container_name: course-service-c
-    
   user-service:
-    build:
-      context: user-service
+    image: usersd
     ports:
-      - 8080:8080
+      - "8080:8080"
     depends_on:
-      - postgres
+      - mongo
+      - gateway
     cap_add:
       - NET_ADMIN
     networks:
-    - pandora
+      - pandora
     container_name: user-service
-
-  user-service-b:
-    build:
-      context: user-service
-    ports:
-      - 8085:8080
-    depends_on:
-      - postgres
-    cap_add:
-      - NET_ADMIN
-    networks:
-    - pandora
-    container_name: user-service-b
-
-  user-service-c:
-    build:
-      context: user-service
-    ports:
-      - 8086:8080
-    depends_on:
-      - postgres
-    cap_add:
-      - NET_ADMIN
-    networks:
-    - pandora
-    container_name: user-service-c
 
   mongo:
     image: mongo
@@ -87,7 +55,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
     ports:
-      - 27017:27017
+      - "27017:27017"
     networks:
       - pandora
     container_name: mongo
@@ -96,7 +64,9 @@ services:
     image: mongo-express
     restart: always
     ports:
-      - 8081:8081
+      - "8090:8081"
+    depends_on:
+      - mongo
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: admin
       ME_CONFIG_MONGODB_ADMINPASSWORD: password

@@ -18,12 +18,6 @@ class Utils {
     @Value("\${server.port}")
     private val port: String = ""
 
-    @Throws(IOException::class)
-    fun readResourceIntoString(resourceLoader: ResourceLoader, file: String): String {
-        val resource = resourceLoader.getResource(file)
-        return IOUtils.toString(resource.inputStream, "UTF-8")
-    }
-
     fun generateJwt(user: User): String {
         val claims: HashMap<String, Any?> = HashMap()
         claims["email"] = user.email
@@ -39,4 +33,10 @@ class Utils {
             .signWith(SignatureAlgorithm.HS256, secret)
             .compact()
     }
+}
+
+@Throws(IOException::class)
+fun readResourceIntoString(resourceLoader: ResourceLoader, file: String): String {
+    val resource = resourceLoader.getResource(file)
+    return IOUtils.toString(resource.inputStream, "UTF-8")
 }

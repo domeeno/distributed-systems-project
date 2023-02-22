@@ -8,5 +8,12 @@ spring:
       password: "password"
       database: "coursedb"
 
+  banner:
+    location: classpath:banner.txt
 server:
   port: 8082
+
+pandora:
+  services:
+    gateway:
+      url: "http://gateway:4000"
