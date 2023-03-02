@@ -31,13 +31,8 @@ fun main(args: Array<String>) {
     val context = runApplication<CourseServiceApplication>(*args)
 
     log.info(
-        "Local: http://127.0.0.1:{}",
-        context.environment.getProperty("server.port", "8082")
-    )
-
-    log.info(
         "External: http://{}:{}",
-        InetAddress.getLocalHost().hostAddress,
-        context.environment.getProperty("server.port", "8082")
+        InetAddress.getLoopbackAddress().hostName,
+        context.environment.getProperty("server.port", "8080")
     )
 }
