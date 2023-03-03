@@ -4,7 +4,8 @@ EXPOSE 8082
 
 CMD ["./gradlew", "bootJar"]
 
-COPY "/build/libs/course-service-0.0.1-SNAPSHOT.jar" "course.jar"
-COPY src/main/resources/application-docker.yml application.yml
+ENV spring.profiles.active="docker"
 
-CMD ["java", "-jar", "-Djava.security.egd=file:/dev/./urandom", "course.jar", "--spring.config.location=application.yml"]
+COPY "/build/libs/course-service-0.0.1-SNAPSHOT.jar" "course.jar"
+
+CMD ["java", "-jar", "-Djava.security.egd=file:/dev/./urandom", "course.jar"]
