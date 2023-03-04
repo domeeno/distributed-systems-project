@@ -17,3 +17,9 @@ pandora:
   services:
     gateway:
       url: "http://gateway:4000"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics"

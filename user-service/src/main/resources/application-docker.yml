@@ -29,3 +29,9 @@ pandora:
       url: "http://course-service:8082"
     gateway:
       url: "http://gateway:4000"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics"
