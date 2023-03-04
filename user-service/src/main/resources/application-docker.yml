@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local
+    active: docker
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://postgres:5432/pandora?currentSchema=identity_schema
@@ -17,7 +17,7 @@ spring:
   banner:
     location: classpath:banner.txt
 server:
-  port: 8080
+  port: 8443
 
 security:
   jwt:
@@ -26,7 +26,7 @@ security:
 pandora:
   services:
     course-service:
-      url: "http://course-service:8082"
+      url: "http://course-service:8444"
     gateway:
       url: "http://gateway:4000"
 

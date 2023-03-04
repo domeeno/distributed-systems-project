@@ -1,6 +1,6 @@
 FROM openjdk:17.0.2
 
-EXPOSE 8082
+EXPOSE 8444
 
 CMD ["./gradlew", "bootJar"]
 

@@ -12,7 +12,7 @@ spring:
     location: classpath:banner.txt
 
 server:
-  port: 8082
+  port: 8444
 
 pandora:
   services:
