@@ -1,9 +1,14 @@
 package com.pandora.fileservice.service
 
+import com.pandora.fileservice.exceptions.ApiException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.Resource
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
 @Service
 class BucketServiceImpl: BucketService {
@@ -16,7 +21,17 @@ class BucketServiceImpl: BucketService {
     }
 
     override fun store(file: MultipartFile, filename: String): String {
-        TODO("Not yet implemented")
+        if(file.isEmpty) {
+            throw ApiException("file cannot be empty", null, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+
+        val destinationFile = Paths.get(rootPath).resolve(Paths.get(file.originalFilename!!)).normalize().toAbsolutePath()
+
+        // TODO resolve tomcat deletion exception
+
+        val inputStream = file.inputStream
+        Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING)
+        return filename;
     }
 
     override fun loadResource(filename: String): Resource {
