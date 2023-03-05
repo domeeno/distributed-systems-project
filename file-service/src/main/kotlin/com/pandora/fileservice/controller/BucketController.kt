@@ -8,12 +8,10 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
-
 
 @RestController
 @RequestMapping("bucket")
@@ -26,37 +24,34 @@ class BucketController(
         return bucketService.init()
     }
 
-    @PostMapping("{userId}/{subjectId}/{topicId}",
+    @PostMapping(
+        path = ["{userId}/{subjectId}/{topicId}"],
         consumes = [
             MediaType.TEXT_MARKDOWN_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE,
-            MediaType.APPLICATION_JSON_VALUE
-        ])
+//            MediaType.APPLICATION_JSON_VALUE
+        ]
+    )
     fun createFile(
         @PathVariable userId: String,
         @PathVariable subjectId: String,
         @PathVariable topicId: String,
-        @RequestPart("file") file: MultipartFile): String {
+        @RequestPart("file") file: MultipartFile
+    ): String {
         return bucketService.store(file, userId, subjectId, topicId)
     }
 
-    @GetMapping("{filename}")
-    fun getFile(@PathVariable filename: String): Resource {
-        return bucketService.loadResource(filename)
+    @GetMapping("{userId}/{subjectId}/{topicId}")
+    fun getFile(
+        @PathVariable userId: String,
+        @PathVariable subjectId: String,
+        @PathVariable topicId: String
+    ): Resource {
+        return bucketService.loadResource("$userId/$subjectId/$topicId.md")
     }
 
     @DeleteMapping("{filename}")
     fun deleteFile(@PathVariable filename: String): String {
         return bucketService.delete(filename)
-    }
-
-    @PutMapping("{filename}",
-        consumes = [
-            MediaType.TEXT_MARKDOWN_VALUE,
-            MediaType.MULTIPART_FORM_DATA_VALUE,
-            MediaType.APPLICATION_JSON_VALUE
-        ])
-    fun updateFile(@RequestPart file: MultipartFile, @PathVariable filename: String): String {
-        return bucketService.update(file, filename)
     }
 }

@@ -12,6 +12,4 @@ interface BucketService {
     fun loadResource(filename: String): Resource
 
     fun delete(filename: String): String
-
-    fun update(file: MultipartFile, filename: String): String
 }

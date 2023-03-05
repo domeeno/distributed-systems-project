@@ -6,4 +6,4 @@ class ApiException(
     override val message: String?,
     override val cause: Throwable?,
     val status: HttpStatus
-    ) : java.lang.RuntimeException()
+) : java.lang.RuntimeException()

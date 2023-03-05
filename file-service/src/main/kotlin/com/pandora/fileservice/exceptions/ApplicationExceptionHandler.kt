@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import java.time.ZonedDateTime
 import javax.servlet.http.HttpServletRequest
 
-
 @ControllerAdvice
 class ApplicationExceptionHandler {
     @ExceptionHandler
