@@ -26,14 +26,18 @@ class BucketController(
         return bucketService.init()
     }
 
-    @PostMapping("{filename}",
+    @PostMapping("{userId}/{subjectId}/{topicId}",
         consumes = [
             MediaType.TEXT_MARKDOWN_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE,
             MediaType.APPLICATION_JSON_VALUE
         ])
-    fun createFile(@RequestPart("file") file: MultipartFile, @PathVariable filename: String): String {
-        return bucketService.store(file, filename)
+    fun createFile(
+        @PathVariable userId: String,
+        @PathVariable subjectId: String,
+        @PathVariable topicId: String,
+        @RequestPart("file") file: MultipartFile): String {
+        return bucketService.store(file, userId, subjectId, topicId)
     }
 
     @GetMapping("{filename}")

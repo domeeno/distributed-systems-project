@@ -17,7 +17,7 @@ class ApplicationExceptionHandler {
     ): ResponseEntity<ErrorResponse> {
         val error = ErrorResponse(
             ZonedDateTime.now(),
-            exception.status!!.value(),
+            exception.status.value(),
             req.requestURI,
             exception.message!!
         )

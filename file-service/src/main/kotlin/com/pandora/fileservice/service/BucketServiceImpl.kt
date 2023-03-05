@@ -20,18 +20,22 @@ class BucketServiceImpl: BucketService {
         return rootPath
     }
 
-    override fun store(file: MultipartFile, filename: String): String {
+    override fun store(file: MultipartFile, userId: String, subjectId: String, topicId: String): String {
         if(file.isEmpty) {
             throw ApiException("file cannot be empty", null, HttpStatus.INTERNAL_SERVER_ERROR)
         }
 
-        val destinationFile = Paths.get(rootPath).resolve(Paths.get(file.originalFilename!!)).normalize().toAbsolutePath()
+        val directories = Paths.get(rootPath).resolve("$userId/$subjectId").normalize().toAbsolutePath()
+
+        Files.createDirectories(directories)
+
+        val destinationFile = Paths.get(rootPath).resolve("$userId/$subjectId/$topicId.md").normalize().toAbsolutePath()
 
         // TODO resolve tomcat deletion exception
 
         val inputStream = file.inputStream
         Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING)
-        return filename;
+        return topicId;
     }
 
     override fun loadResource(filename: String): Resource {

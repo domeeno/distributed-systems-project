@@ -7,7 +7,7 @@ interface BucketService {
 
     fun init(): String
 
-    fun store(file: MultipartFile, filename: String): String
+    fun store(file: MultipartFile, userId: String, subjectId: String, topicId: String): String
 
     fun loadResource(filename: String): Resource
 
