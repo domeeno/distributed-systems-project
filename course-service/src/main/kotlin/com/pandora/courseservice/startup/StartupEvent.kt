@@ -1,4 +1,4 @@
-package com.pandora.courseservice.config
+package com.pandora.courseservice.startup
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value

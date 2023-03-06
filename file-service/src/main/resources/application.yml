@@ -2,6 +2,11 @@ spring:
   profiles:
     active: local
 
+#  servlet:
+#    multipart:
+#      max-file-size: 128KB
+#      max-request-size: 128KB
+
 management:
   endpoints:
     web:
@@ -10,3 +15,12 @@ management:
 
 server:
   port: 8445
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
+
+bucket:
+  rootPath: "./bucket"
