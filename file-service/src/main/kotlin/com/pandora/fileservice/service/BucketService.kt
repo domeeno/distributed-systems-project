@@ -12,4 +12,6 @@ interface BucketService {
     fun loadResource(filename: String): Resource
 
     fun delete(filename: String): String
+
+    fun deleteSubject(filename: String): String
 }

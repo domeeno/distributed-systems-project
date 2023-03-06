@@ -50,8 +50,20 @@ class BucketController(
         return bucketService.loadResource("$userId/$subjectId/$topicId.md")
     }
 
-    @DeleteMapping("{filename}")
-    fun deleteFile(@PathVariable filename: String): String {
-        return bucketService.delete(filename)
+    @DeleteMapping("{userId}/{subjectId}/{topicId}")
+    fun deleteFile(
+        @PathVariable userId: String,
+        @PathVariable subjectId: String,
+        @PathVariable topicId: String
+    ): String {
+        return bucketService.delete("$userId/$subjectId/$topicId.md")
+    }
+
+    @DeleteMapping("{userId}/{subjectId}")
+    fun deleteSubject(
+        @PathVariable userId: String,
+        @PathVariable subjectId: String
+    ): String {
+        return bucketService.deleteSubject("$userId/$subjectId")
     }
 }
