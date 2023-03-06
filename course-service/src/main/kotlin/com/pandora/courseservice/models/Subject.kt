@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Document("subjects")
-class Subject {
+class Subject (
     /*
        This Document stores SUBJECTS - in other words the root of the Subject is this.
        It can have multiple TOPICS
@@ -16,32 +16,32 @@ class Subject {
     */
 
     @Id
-    var id = UUID.randomUUID().toString()
+    var id: String = UUID.randomUUID().toString(),
 
     @Field(name = "subject_name")
-    var subjectName = ""
+    var subjectName: String = "",
 
     @Field(name = "user_id")
-    var userId = ""
+    var userId: String = "",
 
-    var description: String? = ""
+    var description: String? = "",
 
     // subject root topic
     @Field(name = "root_topic")
-    var rootTopic: String = ""
+    var rootTopic: String = "",
 
-    var tags: List<String> = arrayListOf()
+    var tags: List<String> = arrayListOf(),
 
-    var likes: Int = 0
+    var likes: Int = 0,
 
-    var saves: Int = 0
+    var saves: Int = 0,
 
 //    @Field(name = "document_id")
 //    var documentId = ""
 
     @Field(name = "create_timestamp")
-    var createTimestamp: LocalDateTime = LocalDateTime.now()
+    var createTimestamp: LocalDateTime = LocalDateTime.now(),
 
     @Field(name = "update_timestamp")
     var updateTimestamp: LocalDateTime = LocalDateTime.now()
-}
+)

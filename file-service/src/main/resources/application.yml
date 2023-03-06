@@ -1,0 +1,32 @@
+spring:
+  profiles:
+    active: local
+
+#  servlet:
+#    multipart:
+#      max-file-size: 128KB
+#      max-request-size: 128KB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics"
+
+server:
+  port: 8445
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
+
+bucket:
+  rootPath: "./bucket"
+
+
+pandora:
+  services:
+    gateway:
+      url: "http://localhost:4000"

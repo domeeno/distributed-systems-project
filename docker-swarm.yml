@@ -5,6 +5,7 @@ services:
   gateway:
     # image 
     image: dominic02/p-gate:574b633
+
     ports:
       - "4000:4000"
 
@@ -85,6 +86,7 @@ services:
 
   postgres:
     image: postgres:14
+
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
@@ -108,7 +110,6 @@ services:
     networks:
       - webpandora
 
-
   viz:
     # Visualizer image for swarm cluster.
     image: dockersamples/visualizer
@@ -127,4 +128,3 @@ networks:
 volumes:
   postgres:
   pgadmin:
-

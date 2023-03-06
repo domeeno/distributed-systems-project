@@ -12,9 +12,21 @@ spring:
     location: classpath:banner.txt
 
 server:
-  port: 8082
+  port: 8444
 
 pandora:
   services:
     gateway:
       url: "http://localhost:4000"
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,metrics"

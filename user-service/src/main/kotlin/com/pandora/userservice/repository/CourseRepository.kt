@@ -47,7 +47,8 @@ class CourseRepository {
 
         val entity: HttpEntity<*> = HttpEntity<Any>(headers)
 
-        val result: ResponseEntity<String> = RestTemplate().exchange(url, HttpMethod.DELETE, entity, String::class.java, params)
+        val result: ResponseEntity<String> =
+            RestTemplate().exchange(url, HttpMethod.DELETE, entity, String::class.java, params)
         return result.body!!
     }
 }

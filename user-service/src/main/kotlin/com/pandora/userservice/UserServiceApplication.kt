@@ -15,7 +15,6 @@ fun main(args: Array<String>) {
     val context = runApplication<UserServiceApplication>(*args)
 
     log.info(
-
         "External: http://{}:{}",
         InetAddress.getLoopbackAddress().hostName,
         context.environment.getProperty("server.port", "8080")
