@@ -1,26 +1,25 @@
-version: '3.1'
+version: '3.8'
 
 services:
-  gateway:
 
+  gateway:
     # image 
-    image: dominic02/p-gate
+    image: dominic02/p-gate:574b633
+
     ports:
       - "4000:4000"
 
     networks:
       - webpandora
 
-
   cache:
-    image: dominic02/p-cache
+    image: dominic02/p-cache:574b633
 
     networks:
       - webpandora
 
-
   course-service:
-    image: dominic02/p-course
+    image: dominic02/p-course:574b633
 
     depends_on:
       - mongo
@@ -40,7 +39,7 @@ services:
           memory: 1024M
 
   user-service:
-    image: dominic02/p-user
+    image: dominic02/p-user:574b633
 
     depends_on:
       - mongo
@@ -51,7 +50,6 @@ services:
 
     deploy:
       replicas: 2
-
 
   mongo:
     # Database
@@ -89,7 +87,6 @@ services:
   postgres:
     image: postgres:14
 
-    
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
@@ -99,15 +96,6 @@ services:
       - postgres:/data/postgres
     networks:
       - webpandora
-
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 1024M
-        reservations:
-          cpus: '0.25'
-          memory: 1024M
 
   pgadmin:
     image: dpage/pgadmin4
@@ -121,6 +109,18 @@ services:
       - "5050:80"
     networks:
       - webpandora
+
+  viz:
+    # Visualizer image for swarm cluster.
+    image: dockersamples/visualizer
+    # Mapping container ports to host port
+    ports:
+      - "8086:8080"
+    # Mounting docker socket to container.
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - webpandora 
 
 networks:
   webpandora:
