@@ -6,6 +6,6 @@ CMD ["./gradlew", "bootJar"]
 
 ENV spring.profiles.active="docker"
 
-COPY "build/libs/file-service-0.0.1-SNAPSHOT.jar" "bucket.jar"
+COPY "/build/libs/file-service-0.0.1-SNAPSHOT.jar" "bucket.jar"
 
 CMD ["java", "-jar", "bucket.jar"]

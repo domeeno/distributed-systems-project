@@ -3,7 +3,7 @@ version: '3.1'
 services:
   
   gateway:
-    image: gatewaysd
+    image: dominic02/p-gateway:40cdd34 
     ports:
       - "4000:4000"
     cap_add:
@@ -13,7 +13,7 @@ services:
     container_name: gateway
 
   cache:
-    image: cachesd
+    image: dominic02/p-cache:40cdd34
     ports:
       - "4040:4040"
     cap_add:
@@ -23,7 +23,7 @@ services:
     container_name: cache
 
   course-service:
-    image: subjectsd
+    image: dominic02/p-course:40cdd34 
     ports:
       - "8444:8444"
     depends_on:
@@ -36,7 +36,7 @@ services:
     container_name: course-service
 
   user-service:
-    image: usersd
+    image: dominic02/p-user:40cdd34
     ports:
       - "8443:8443"
     depends_on:
@@ -47,6 +47,18 @@ services:
     networks:
       - pandora
     container_name: user-service
+
+  file-service:
+    image: dominic02/p-file:40cdd34
+    ports:
+      - "8445:8445"
+    depends_on:
+      - gateway
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - pandora
+    container_name: file-service
 
   mongo:
     image: mongo
