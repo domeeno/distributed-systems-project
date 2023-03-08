@@ -6,21 +6,17 @@ defmodule Gateway do
 
   def start(_type, _args) do
     children = [
-      %{id: Registry, start: {Registry, :start_link, [:duplicate, Registry.ViaTest]}},
+      # Layers:
+      #
+      # 1. Router 
       Plug.Cowboy.child_spec(
         scheme: :http,
         plug: Gateway.Router,
         options: [
-          dispatch: dispatch(),
           port: @app.port
         ]
-      ),
-      Registry.child_spec(
-        keys: :duplicate,
-        name: Registry.Gateway
-      ),
-      %{id: ServiceSupervisor, start: {LoadBalancer.Supervisor, :start_link, []}},
-      %{id: CacheServerSupervisor, start: {Cache.ServerSupervisor, :start_link, []}}
+      )
+
     ]
 
     opts = [strategy: :one_for_one, name: Gateway.Application]
@@ -30,12 +26,4 @@ defmodule Gateway do
     Supervisor.start_link(children, opts)
   end
 
-  defp dispatch do
-    [
-      {:_,
-       [
-         {:_, Plug.Cowboy.Handler, {Gateway.Router, []}}
-       ]}
-    ]
-  end
 end
