@@ -1,6 +1,5 @@
 package com.pandora.userservice.models
 
-import com.pandora.userservice.dto.EditUserDTO
 import com.pandora.userservice.dto.UserDTO
 import com.pandora.userservice.dto.UserInfoDTO
 
@@ -20,16 +19,5 @@ fun User.toInfo(): UserInfoDTO {
         firstName = firstname,
         subjectsId = subjectsId,
         bio = bio
-    )
-}
-
-fun User.toEditDTO(): EditUserDTO {
-    return EditUserDTO(
-        email = email,
-        firstName = firstname,
-        lastName = lastname,
-        dateOfBirth = dateOfBirth,
-        bio = bio,
-        userId = userId.toString()
     )
 }
