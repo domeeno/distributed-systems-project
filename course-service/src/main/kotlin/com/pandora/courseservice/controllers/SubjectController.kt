@@ -29,12 +29,12 @@ class SubjectController(
 ) {
 
     @GetMapping
-    fun getAllSubjects(): ResponseEntity<List<Subject>> {
-        return ResponseEntity.ok(subjectRepository.findAll())
+    fun getAllSubjects(): List<Subject> {
+        return subjectRepository.findAll()
     }
 
     @GetMapping("{subjectId}")
-    fun getSubjectTree(@PathVariable subjectId: String): ResponseEntity<SubjectTreeDTO> {
+    fun getSubjectTree(@PathVariable subjectId: String): SubjectTreeDTO {
         val subject = subjectRepository.findById(subjectId).get()
 
         // 1: graph lookup for topic
@@ -47,7 +47,7 @@ class SubjectController(
             tree = tree
         )
 
-        return ResponseEntity.ok(response)
+        return response
     }
 
     @PostMapping("{userSubjectId}/user/{userId}")
@@ -55,7 +55,7 @@ class SubjectController(
         @PathVariable userSubjectId: String,
         @PathVariable userId: String,
         @RequestBody subjectDto: CreateSubjectDTO
-    ): ResponseEntity<String> {
+    ): String {
 
         val childTopic = Topic() // Create child topic
         childTopic.topicName = subjectDto.subjectName
@@ -74,7 +74,7 @@ class SubjectController(
         userSubjects.subjectsList = listOf(result.id) + userSubjects.subjectsList
         userSubjectsRepository.save(userSubjects)
 
-        return ResponseEntity.ok(result.id)
+        return result.id
     }
 
     @PutMapping("{subjectId}")
