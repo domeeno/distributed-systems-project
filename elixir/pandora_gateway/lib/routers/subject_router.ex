@@ -1,4 +1,4 @@
-defmodule SubjectRouter do
+defmodule Router.Subject do
   use Plug.Router
   require Logger
 
