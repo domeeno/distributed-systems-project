@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Document("subjects")
-class Subject (
+class Subject(
     /*
        This Document stores SUBJECTS - in other words the root of the Subject is this.
        It can have multiple TOPICS

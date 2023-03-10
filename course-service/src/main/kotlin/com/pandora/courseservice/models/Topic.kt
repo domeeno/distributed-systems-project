@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 @Document("topics")
-class Topic (
+class Topic(
 
     /*
        This Document stores Subject's topics, in other words this will branch out the subject into multiple topics

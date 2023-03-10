@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document("user_subjects")
-class UserSubjects (
+class UserSubjects(
     /*
         This Document stores user created subjects
     */
