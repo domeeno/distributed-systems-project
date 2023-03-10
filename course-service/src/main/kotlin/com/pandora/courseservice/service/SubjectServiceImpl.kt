@@ -1,8 +1,10 @@
 package com.pandora.courseservice.service
 
 import com.pandora.courseservice.dto.SubjectDTO
+import com.pandora.courseservice.dto.SubjectSearchDTO
 import com.pandora.courseservice.dto.SubjectTreeDTO
 import com.pandora.courseservice.exceptions.ApiException
+import com.pandora.courseservice.extensions.toSubjectSearchDTO
 import com.pandora.courseservice.models.Subject
 import com.pandora.courseservice.models.Topic
 import com.pandora.courseservice.repository.GraphLookupRepository
@@ -10,9 +12,13 @@ import com.pandora.courseservice.repository.SubjectRepository
 import com.pandora.courseservice.repository.TopicRepository
 import com.pandora.courseservice.repository.UserSubjectsRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
+import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
+@Service
 class SubjectServiceImpl(
     @Autowired private val subjectRepository: SubjectRepository,
     @Autowired private val topicRepository: TopicRepository,
@@ -36,6 +42,11 @@ class SubjectServiceImpl(
             subject = subject,
             tree = tree
         )
+    }
+
+    override fun getSubjects(page: Int, size: Int, input: String): List<SubjectSearchDTO> {
+        val pageable: Pageable = PageRequest.of(page, size)
+        return subjectRepository.findBySubjectNameContainingIgnoreCase(input, pageable).map { it.toSubjectSearchDTO() }
     }
 
     override fun createSubject(userSubjectId: String, userId: String, dto: SubjectDTO): String {

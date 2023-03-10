@@ -32,6 +32,13 @@ data class SubjectDTO(
     val tags: List<String>
 )
 
+data class SubjectSearchDTO(
+    val subjectId: String,
+    val subjectName: String,
+    val description: String?,
+    val tags: List<String>
+)
+
 data class TopicDTO(
     val userId: String, // Get from token
     val topicName: String

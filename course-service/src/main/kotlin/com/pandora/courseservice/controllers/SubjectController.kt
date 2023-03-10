@@ -1,6 +1,7 @@
 package com.pandora.courseservice.controllers
 
 import com.pandora.courseservice.dto.SubjectDTO
+import com.pandora.courseservice.dto.SubjectSearchDTO
 import com.pandora.courseservice.dto.SubjectTreeDTO
 import com.pandora.courseservice.models.Subject
 import com.pandora.courseservice.service.SubjectService
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -23,6 +25,15 @@ class SubjectController(
     @GetMapping
     fun getAllSubjects(): List<Subject> {
         return subjectService.getAllSubjects()
+    }
+
+    @GetMapping("search")
+    fun getSubjects(
+        @RequestParam page: Int,
+        @RequestParam size: Int,
+        @RequestParam input: String
+    ): List<SubjectSearchDTO> {
+        return subjectService.getSubjects(page, size, input)
     }
 
     @GetMapping("{subjectId}")
