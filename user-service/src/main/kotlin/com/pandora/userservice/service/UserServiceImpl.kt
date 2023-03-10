@@ -4,6 +4,7 @@ import com.pandora.userservice.dto.EditUserDTO
 import com.pandora.userservice.dto.UserEntryDTO
 import com.pandora.userservice.dto.UserInfoDTO
 import com.pandora.userservice.dto.UserLoginDTO
+import com.pandora.userservice.exceptions.ApiException
 import com.pandora.userservice.models.User
 import com.pandora.userservice.models.toInfo
 import com.pandora.userservice.repository.CourseRepository
@@ -11,14 +12,13 @@ import com.pandora.userservice.repository.UserRepository
 import com.pandora.userservice.utils.Utils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.sql.Timestamp
 import java.util.UUID
 
 @Service
-class UserServiceImpl (
+class UserServiceImpl(
     @Autowired private val userRepository: UserRepository,
     @Autowired private val courseRepository: CourseRepository,
     @Autowired private val utils: Utils
@@ -37,21 +37,19 @@ class UserServiceImpl (
         val oUser = userRepository.findByEmail(loginDTO.email)
         val user: User
         if (oUser.isEmpty) {
-            // TODO Use custom errors
-            throw java.lang.Exception("not found")
+            throw ApiException("User with email: ${loginDTO.email} not found", null, HttpStatus.NOT_FOUND)
         } else {
             user = oUser.get()
         }
 
-        return if (!passwordEncoder.matches(
+        if (!passwordEncoder.matches(
                 loginDTO.password,
                 user.password
             )
         ) {
-            // TODO Use custom errors
-            throw java.lang.Exception("Not good")
+            throw ApiException("Incorrect Password", null, HttpStatus.UNAUTHORIZED)
         } else {
-            utils.generateJwt(user)
+            return utils.generateJwt(user)
         }
     }
 

@@ -1,4 +1,4 @@
-package com.pandora.userservice.config
+package com.pandora.userservice.startup
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value

@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -42,7 +41,7 @@ class UserListController(
     */
 
     @PostMapping("/new")
-    fun createNewUserEntries(@RequestBody entryDTO: EntryDTO): ResponseEntity<String> {
+    fun createNewUserEntries(@RequestBody entryDTO: EntryDTO): String {
         val liked = Liked()
         liked.id = entryDTO.likedId
         liked.likedList = arrayListOf()
@@ -59,11 +58,11 @@ class UserListController(
         savedRepository.save(saved)
         userSubjectsRepository.save(subjects)
 
-        return ResponseEntity.ok().body("Created")
+        return "Created"
     }
 
     @GetMapping("/likes/{id}")
-    fun getUserLikes(@PathVariable id: String): ResponseEntity<LikedListDTO> {
+    fun getUserLikes(@PathVariable id: String): LikedListDTO {
         val likedList = likedRepository.findById(id).get().toSubjectIdList()
 
         val query = Query(Criteria.where("id").`in`(likedList))
@@ -77,11 +76,11 @@ class UserListController(
             }
         )
 
-        return ResponseEntity.ok().body(likedListDTO)
+        return likedListDTO
     }
 
     @GetMapping("/saves/{id}")
-    fun getUserSaves(@PathVariable id: String): ResponseEntity<SavedListDTO> {
+    fun getUserSaves(@PathVariable id: String): SavedListDTO {
         val savedList = savedRepository.findById(id).get().toSubjectIdList()
 
         val query = Query(Criteria.where("id").`in`(savedList))
@@ -95,11 +94,11 @@ class UserListController(
             }
         )
 
-        return ResponseEntity.ok().body(savedListDTO)
+        return savedListDTO
     }
 
     @GetMapping("/subjects/{id}")
-    fun getUserCreatedSubjects(@PathVariable id: String): ResponseEntity<SubjectListDTO> {
+    fun getUserCreatedSubjects(@PathVariable id: String): SubjectListDTO {
         val savedList = savedRepository.findById(id).get().toSubjectIdList()
 
         val query = Query(Criteria.where("id").`in`(savedList))
@@ -113,11 +112,11 @@ class UserListController(
             }
         )
 
-        return ResponseEntity.ok().body(subjectListDTO)
+        return subjectListDTO
     }
 
     @PutMapping("{likedId}/like/{subjectId}")
-    fun addToUserLikedSubjects(@PathVariable likedId: String, @PathVariable subjectId: String): ResponseEntity<String> {
+    fun addToUserLikedSubjects(@PathVariable likedId: String, @PathVariable subjectId: String): String {
         val liked = likedRepository.findById(likedId).get()
 
         val subject = subjectRepository.findById(subjectId).get()
@@ -135,6 +134,6 @@ class UserListController(
         subject.likes += 1
         subjectRepository.save(subject)
 
-        return ResponseEntity.ok(subjectId)
+        return subjectId
     }
 }

@@ -1,8 +1,8 @@
 package com.pandora.userservice.models
 
-import com.pandora.userservice.dto.EditUserDTO
 import com.pandora.userservice.dto.UserDTO
 import com.pandora.userservice.dto.UserInfoDTO
+import com.pandora.userservice.dto.UserLoginDTO
 
 fun UserDTO.toUserEntity(): User {
     return User(
@@ -23,13 +23,20 @@ fun User.toInfo(): UserInfoDTO {
     )
 }
 
-fun User.toEditDTO(): EditUserDTO {
-    return EditUserDTO(
+fun UserDTO.toPrivate(): UserDTO {
+    return UserDTO(
+        userId = "no id yet",
         email = email,
-        firstName = firstname,
-        lastName = lastname,
-        dateOfBirth = dateOfBirth,
-        bio = bio,
-        userId = userId.toString()
+        firstName = firstName,
+        lastName = lastName,
+        password = "*********",
+        dateOfBirth = dateOfBirth
+    )
+}
+
+fun UserLoginDTO.toPrivate(): UserLoginDTO {
+    return UserLoginDTO(
+        email = email,
+        password = "*********"
     )
 }

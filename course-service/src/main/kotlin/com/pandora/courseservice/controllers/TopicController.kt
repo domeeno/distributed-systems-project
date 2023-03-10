@@ -4,7 +4,6 @@ import com.pandora.courseservice.dto.TopicDTO
 import com.pandora.courseservice.models.Topic
 import com.pandora.courseservice.repository.TopicRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -19,12 +18,12 @@ class TopicController(
 ) {
 
     @GetMapping("{topicId}")
-    fun getTopic(@PathVariable topicId: String): ResponseEntity<Topic> {
-        return ResponseEntity.ok(topicRepository.findById(topicId).get())
+    fun getTopic(@PathVariable topicId: String): Topic {
+        return topicRepository.findById(topicId).get()
     }
 
     @PostMapping("parent/{topicId}")
-    fun createTopic(@PathVariable topicId: String, @RequestBody topicDto: TopicDTO): ResponseEntity<String> {
+    fun createTopic(@PathVariable topicId: String, @RequestBody topicDto: TopicDTO): String {
         val parentTopic = topicRepository.findById(topicId).get()
         val newTopic = Topic()
         newTopic.topicName = topicDto.topicName
@@ -33,11 +32,11 @@ class TopicController(
         val topicDb = topicRepository.save(newTopic)
         parentTopic.childIds = listOf(topicDb.id) + parentTopic.childIds
         topicRepository.save(parentTopic)
-        return ResponseEntity.ok(topicDb.id)
+        return topicDb.id
     }
 
     @GetMapping
-    fun getAllTopics(): ResponseEntity<List<Topic>> {
-        return ResponseEntity.ok(topicRepository.findAll())
+    fun getAllTopics(): List<Topic> {
+        return topicRepository.findAll()
     }
 }
