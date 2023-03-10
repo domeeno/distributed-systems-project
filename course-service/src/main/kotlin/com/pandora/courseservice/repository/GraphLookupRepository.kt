@@ -13,21 +13,8 @@ class GraphLookupRepository(
     @Autowired val mongoTemplate: MongoTemplate
 ) {
 
-    fun getTopicTree(topicId: String, maxDepth: Long = 16L): Topic {
-        val criteria = Criteria("_id").`is`(topicId)
-
-        val matchStage = Aggregation.match(criteria)
-
-        val operation = GraphLookupOperation.builder()
-            .from("topics")
-            .startWith("\$_id")
-            .connectFrom("_id")
-            .connectTo("parent_id")
-            .maxDepth(maxDepth)
-            .`as`("all_topics")
-
-        val aggregation = Aggregation.newAggregation(matchStage, operation)
-        val parentTopic = mongoTemplate.aggregate(aggregation, "topics", Topic::class.java).mappedResults.first()
+    fun getTopicTree(topicId: String): Topic {
+        val parentTopic = getParentTopicAggregation(topicId)
 
         // Nesting the topicTree
         // once for parentTopic
@@ -43,8 +30,11 @@ class GraphLookupRepository(
         return parentTopic
     }
 
-    fun getTopics(topicId: String, maxDepth: Long = 16L): List<Topic> {
+    fun getTopics(topicId: String): List<Topic> {
+        return getParentTopicAggregation(topicId).allTopics
+    }
 
+    private fun getParentTopicAggregation(topicId: String, maxDepth: Long = 16L): Topic {
         val criteria = Criteria("_id").`is`(topicId)
 
         val matchStage = Aggregation.match(criteria)
@@ -58,9 +48,7 @@ class GraphLookupRepository(
             .`as`("all_topics")
 
         val aggregation = Aggregation.newAggregation(matchStage, operation)
-        val parentTopic = mongoTemplate.aggregate(aggregation, "topics", Topic::class.java).mappedResults.first()
-
-        return parentTopic.allTopics
+        return mongoTemplate.aggregate(aggregation, "topics", Topic::class.java).mappedResults.first()
     }
 
     private fun nestTree(topicTree: List<Topic>, allTopics: List<Topic>) {

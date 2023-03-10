@@ -62,7 +62,7 @@ class SubjectServiceImpl(
     override fun updateSubject(subjectId: String, dto: SubjectDTO): String {
         val oSubject = subjectRepository.findById(subjectId)
 
-        if(oSubject.isEmpty) {
+        if (oSubject.isEmpty) {
             throw ApiException("Subject $subjectId not found", null, HttpStatus.NOT_FOUND)
         }
 
