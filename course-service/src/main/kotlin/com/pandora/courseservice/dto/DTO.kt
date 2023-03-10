@@ -10,23 +10,23 @@ data class EntryDTO(
 )
 
 data class LikedListDTO(
-    val userLikes: List<SubjectDTO>
+    val userLikes: List<UserSubjectDTO>
 )
 
 data class SavedListDTO(
-    val userSaves: List<SubjectDTO>
+    val userSaves: List<UserSubjectDTO>
 )
 
 data class SubjectListDTO(
-    val userSubjects: List<SubjectDTO>
+    val userSubjects: List<UserSubjectDTO>
 )
 
-data class SubjectDTO(
+data class UserSubjectDTO(
     val subjectId: String,
     val subjectName: String
 )
 
-data class CreateSubjectDTO(
+data class SubjectDTO(
     val subjectName: String,
     val description: String,
     val tags: List<String>

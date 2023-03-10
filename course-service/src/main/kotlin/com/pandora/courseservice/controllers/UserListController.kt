@@ -3,8 +3,8 @@ package com.pandora.courseservice.controllers
 import com.pandora.courseservice.dto.EntryDTO
 import com.pandora.courseservice.dto.LikedListDTO
 import com.pandora.courseservice.dto.SavedListDTO
-import com.pandora.courseservice.dto.SubjectDTO
 import com.pandora.courseservice.dto.SubjectListDTO
+import com.pandora.courseservice.dto.UserSubjectDTO
 import com.pandora.courseservice.extensions.toSubjectIdList
 import com.pandora.courseservice.models.Liked
 import com.pandora.courseservice.models.Saved
@@ -71,7 +71,7 @@ class UserListController(
 
         val likedListDTO = LikedListDTO(
             userLikes = result.map {
-                val likedDTO = SubjectDTO(subjectName = it.subjectName, subjectId = it.id)
+                val likedDTO = UserSubjectDTO(subjectName = it.subjectName, subjectId = it.id)
                 likedDTO
             }
         )
@@ -89,7 +89,7 @@ class UserListController(
 
         val savedListDTO = SavedListDTO(
             userSaves = result.map {
-                val savedDTO = SubjectDTO(subjectName = it.subjectName, subjectId = it.id)
+                val savedDTO = UserSubjectDTO(subjectName = it.subjectName, subjectId = it.id)
                 savedDTO
             }
         )
@@ -107,7 +107,7 @@ class UserListController(
 
         val subjectListDTO = SubjectListDTO(
             userSubjects = result.map {
-                val savedDTO = SubjectDTO(subjectName = it.subjectName, subjectId = it.id)
+                val savedDTO = UserSubjectDTO(subjectName = it.subjectName, subjectId = it.id)
                 savedDTO
             }
         )

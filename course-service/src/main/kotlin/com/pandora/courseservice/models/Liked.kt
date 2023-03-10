@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document("user_likes")
-data class Liked (
+data class Liked(
     /*
         This Document stores user liked subjects
     */
