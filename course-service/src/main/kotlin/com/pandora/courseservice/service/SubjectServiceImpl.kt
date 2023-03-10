@@ -2,6 +2,7 @@ package com.pandora.courseservice.service
 
 import com.pandora.courseservice.dto.SubjectDTO
 import com.pandora.courseservice.dto.SubjectTreeDTO
+import com.pandora.courseservice.exceptions.ApiException
 import com.pandora.courseservice.models.Subject
 import com.pandora.courseservice.models.Topic
 import com.pandora.courseservice.repository.GraphLookupRepository
@@ -9,6 +10,8 @@ import com.pandora.courseservice.repository.SubjectRepository
 import com.pandora.courseservice.repository.TopicRepository
 import com.pandora.courseservice.repository.UserSubjectsRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import java.time.LocalDateTime
 
 class SubjectServiceImpl(
     @Autowired private val subjectRepository: SubjectRepository,
@@ -57,10 +60,32 @@ class SubjectServiceImpl(
     }
 
     override fun updateSubject(subjectId: String, dto: SubjectDTO): String {
-        TODO("Not yet implemented")
+        val oSubject = subjectRepository.findById(subjectId)
+
+        if(oSubject.isEmpty) {
+            throw ApiException("Subject $subjectId not found", null, HttpStatus.NOT_FOUND)
+        }
+
+        val subject = oSubject.get()
+
+        subject.subjectName = dto.subjectName
+        subject.description = dto.description
+        subject.tags = dto.tags
+        subject.updateTimestamp = LocalDateTime.now()
+
+        subjectRepository.save(subject)
+
+        return subjectId
     }
 
     override fun deleteSubject(subjectId: String): String {
-        TODO("Not yet implemented")
+        val subject = subjectRepository.findById(subjectId).get()
+        val topics = graphLookupRepository.getTopics(subject.rootTopic)
+
+        topicRepository.deleteAll(topics)
+
+        subjectRepository.delete(subject)
+
+        return subjectId
     }
 }
