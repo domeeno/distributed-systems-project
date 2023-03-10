@@ -1,4 +1,4 @@
-defmodule Router.User do
+defmodule Router.File do
   use Plug.Router
   require Logger
 
@@ -20,41 +20,7 @@ defmodule Router.User do
 
   plug(:dispatch)
 
-  get ":user_id/info" do
-    {status, body} =
-      handle_response(
-        GenServer.call(
-          :userservice,
-          {:get_request, "user/#{user_id}/info"}
-        )
-      )
-
-    respond(conn, status, body)
-  end
-
-  post "/register" do
-    {status, body} =
-      handle_response(
-        GenServer.call(
-          :userservice,
-          {:post_request, "/register", Poison.encode!(conn.body_params)}
-        )
-      )
-
-    respond(conn, status, body)
-  end
-
-  post "/login" do
-    {status, body} =
-      handle_response(
-        GenServer.call(
-          :userservice,
-          {:post_request, "/user/login", Poison.encode!(conn.body_params)}
-        )
-      )
-
-    respond(conn, status, body)
-  end
+  
 
   # TODO handle this duplication later
   defp handle_response(response) do

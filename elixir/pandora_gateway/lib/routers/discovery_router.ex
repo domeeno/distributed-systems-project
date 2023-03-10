@@ -1,4 +1,4 @@
-defmodule ServiceRouter do
+defmodule Discovery.Router do
   use Plug.Router
   require Logger
 

@@ -27,16 +27,16 @@ defmodule Gateway.Router do
   end
 
   # userservice
-  forward("/user", to: UserRouter)
+  forward("/user", to: Router.User)
 
   # subjectservice
-  forward("/subject", to: SubjectRouter)
+  forward("/subject", to: Router.Subject)
 
   # fileservice
-  # forward("/file", to: Router.FileRouter)
+  forward("/file", to: Router.Filer)
 
   # service discovery
-  forward("/service", to: ServiceRouter)
+  forward("/service", to: Router.Discovery)
 
   match _ do
     send_resp(conn, 404, "404")
