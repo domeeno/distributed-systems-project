@@ -9,7 +9,6 @@ import com.pandora.courseservice.repository.SubjectRepository
 import com.pandora.courseservice.repository.TopicRepository
 import com.pandora.courseservice.repository.UserSubjectsRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -42,12 +41,11 @@ class SubjectController(
         val tree = graphLookupRepository.getTopicTree(subject.rootTopic)
 
         // 2: assign to response the subject
-        val response = SubjectTreeDTO(
+
+        return SubjectTreeDTO(
             subject = subject,
             tree = tree
         )
-
-        return response
     }
 
     @PostMapping("{userSubjectId}/user/{userId}")

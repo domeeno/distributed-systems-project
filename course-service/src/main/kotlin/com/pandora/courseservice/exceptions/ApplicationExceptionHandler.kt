@@ -1,4 +1,4 @@
-package com.pandora.fileservice.exceptions
+package com.pandora.courseservice.exceptions
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

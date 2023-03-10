@@ -1,4 +1,4 @@
-package com.pandora.fileservice.exceptions
+package com.pandora.courseservice.exceptions
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.ZonedDateTime
