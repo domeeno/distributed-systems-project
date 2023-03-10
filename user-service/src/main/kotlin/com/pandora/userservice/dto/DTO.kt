@@ -13,7 +13,6 @@ data class UserDTO(
 )
 
 data class EditUserDTO(
-    val userId: String?,
     val email: String?,
     val firstName: String?,
     val lastName: String?,
