@@ -20,7 +20,7 @@ class ApplicationExceptionHandler {
             req.requestURI,
             exception.message!!
         )
-        return ResponseEntity<ErrorResponse>(error, HttpStatus.NOT_FOUND)
+        return ResponseEntity<ErrorResponse>(error, HttpStatus.valueOf(exception.status.value()))
     }
 
     @ExceptionHandler

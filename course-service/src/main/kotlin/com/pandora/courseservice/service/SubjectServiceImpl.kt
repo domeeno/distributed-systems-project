@@ -44,9 +44,13 @@ class SubjectServiceImpl(
         )
     }
 
-    override fun getSubjects(page: Int, size: Int, input: String): List<SubjectSearchDTO> {
+    override fun getSubjects(page: Int, size: Int, input: String?): List<SubjectSearchDTO> {
         val pageable: Pageable = PageRequest.of(page, size)
-        return subjectRepository.findBySubjectNameContainingIgnoreCase(input, pageable).map { it.toSubjectSearchDTO() }
+        return if(!input.isNullOrEmpty()) {
+            subjectRepository.findBySubjectNameContainingIgnoreCase(input, pageable).map { it.toSubjectSearchDTO() }
+        } else {
+            subjectRepository.findAll(pageable).content.map { it.toSubjectSearchDTO() }
+        }
     }
 
     override fun createSubject(userSubjectId: String, userId: String, dto: SubjectDTO): String {

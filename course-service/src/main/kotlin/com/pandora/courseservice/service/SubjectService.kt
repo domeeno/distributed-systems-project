@@ -9,7 +9,7 @@ interface SubjectService {
 
     fun getAllSubjects(): List<Subject>
 
-    fun getSubjects(page: Int, size: Int, input: String): List<SubjectSearchDTO>
+    fun getSubjects(page: Int, size: Int, input: String?): List<SubjectSearchDTO>
 
     fun getSubjectTree(subjectId: String): SubjectTreeDTO
 
