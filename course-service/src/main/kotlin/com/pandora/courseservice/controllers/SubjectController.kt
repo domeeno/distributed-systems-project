@@ -31,7 +31,7 @@ class SubjectController(
     fun getSubjects(
         @RequestParam page: Int,
         @RequestParam size: Int,
-        @RequestParam input: String
+        @RequestParam input: String?
     ): List<SubjectSearchDTO> {
         return subjectService.getSubjects(page, size, input)
     }
