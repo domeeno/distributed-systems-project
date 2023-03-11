@@ -1,4 +1,4 @@
-defmodule Discovery.Router do
+defmodule Router.Discovery do
   use Plug.Router
   require Logger
 
@@ -34,7 +34,7 @@ defmodule Discovery.Router do
         GenServer.call(:userservice, {:register, service, address})
 
       "file" ->
-        GenServer.call(:file, {:register, service, address})
+        GenServer.call(:bucket, {:register, service, address})
 
       "cache" ->
         GenServer.call(:cache, {:register, service, address})

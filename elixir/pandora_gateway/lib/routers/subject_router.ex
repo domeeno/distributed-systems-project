@@ -25,7 +25,7 @@ defmodule Router.Subject do
       {:found, data} ->
         respond(conn, 200, data)
 
-      {:not_found} ->
+        _ ->
         {status, body} =
           handle_response(
             GenServer.call(
@@ -46,6 +46,19 @@ defmodule Router.Subject do
         GenServer.call(
           :subject,
           {:post_request, "/topic", Poison.encode!(conn.body_params)}
+        )
+      )
+
+    respond(conn, status, body)
+  end
+
+  # TODO maybe abstract to not have duplication
+  post "/:userSubjectsId/user/:userId" do
+    {status, body} = 
+      handle_response(
+        GenServer.call(
+          :subject,
+          {:post_request, "/#{userSubjectsId}/user/#{userId}", }
         )
       )
 
