@@ -20,7 +20,9 @@ defmodule Router.File do
 
   plug(:dispatch)
 
-  
+  get "{fileId}" do
+    send_resp(conn, 200, "good")
+  end
 
   # TODO handle this duplication later
   defp handle_response(response) do

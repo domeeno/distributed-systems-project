@@ -33,7 +33,7 @@ defmodule Gateway.Router do
   forward("/subject", to: Router.Subject)
 
   # fileservice
-  forward("/file", to: Router.Filer)
+  forward("/file", to: Router.File)
 
   # service discovery
   forward("/service", to: Router.Discovery)
