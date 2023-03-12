@@ -15,7 +15,7 @@ defmodule Gateway.MixProject do
   def application do
     [
       mod: {Gateway, []},
-      extra_applications: [:logger]
+      extra_applications: [:logger, :logstash_json]
     ]
   end
 
@@ -27,7 +27,8 @@ defmodule Gateway.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:httpoison, "~> 1.8"},
       {:poison, "~> 5.0"},
-      {:cors_plug, "~> 3.0"}
+      {:cors_plug, "~> 3.0"},
+      {:logstash_json, "~> 0.7"}
     ]
   end
 end
