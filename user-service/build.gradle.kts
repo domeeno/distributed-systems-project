@@ -24,8 +24,10 @@ dependencies {
         exclude("org.springframework.boot", "spring-boot-starter-tomcat")
     }
 
+    //  ELK
     implementation("net.logstash.logback:logstash-logback-encoder:7.3")
     implementation("org.springframework.boot:spring-boot-starter-data-elasticsearch")
+    testImplementation("ch.qos.logback:logback-classic:0.9.26")
 
     implementation("org.springframework.boot:spring-boot-starter-jetty")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -45,7 +47,6 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
 
     testImplementation("com.ninja-squad:springmockk:3.1.1")
-    testImplementation("ch.qos.logback:logback-classic:0.9.26")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")

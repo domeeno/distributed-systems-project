@@ -10,12 +10,12 @@
         </encoder>
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/user.log</file>
+        <file>logs/course.log</file>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <customFields>{"application": "${title}"}</customFields>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/user.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/course.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>7</maxHistory>
         </rollingPolicy>
     </appender>
@@ -25,7 +25,7 @@
             <customFields>{"application": "${title}"}</customFields>
         </encoder>
     </appender>
-    <logger name="com.pandora.userservice" level="INFO" additivity="false">
+    <logger name="com.pandora.courseservice" level="INFO" additivity="false">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
         <appender-ref ref="logstash" />

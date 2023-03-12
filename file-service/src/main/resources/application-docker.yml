@@ -1,3 +1,5 @@
+application:
+  title: "BucketService"
 #  servlet:
 #    multipart:
 #      max-file-size: 128KB
@@ -25,3 +27,6 @@ pandora:
   services:
     gateway:
       url: "http://gateway:4000"
+
+logstash:
+  address: elk:5055
