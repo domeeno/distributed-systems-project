@@ -4,7 +4,6 @@ import com.pandora.courseservice.exceptions.ApiException
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
-import org.eclipse.jetty.server.Request
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Configuration
 import org.springframework.dao.DataIntegrityViolationException

@@ -1,23 +1,15 @@
 package com.pandora.userservice.controllers
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.ninjasquad.springmockk.MockkBean
-import com.pandora.userservice.dto.UserLoginDTO
-import com.pandora.userservice.models.User
 import com.pandora.userservice.repository.UserRepository
-import com.pandora.userservice.utils.readResourceIntoString
-import io.mockk.every
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ResourceLoader
-import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.context.WebApplicationContext
-import java.util.Optional
 
 @MockkBean(UserRepository::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
