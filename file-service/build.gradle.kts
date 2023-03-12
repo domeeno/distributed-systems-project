@@ -23,11 +23,16 @@ dependencies {
         exclude("org.springframework.boot", "spring-boot-starter-tomcat")
     }
 
+    //  ELK
+    implementation("net.logstash.logback:logstash-logback-encoder:7.3")
+    implementation("org.springframework.boot:spring-boot-starter-data-elasticsearch")
+    testImplementation("ch.qos.logback:logback-classic:0.9.26")
+
     implementation("org.springframework.boot:spring-boot-starter-jetty")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
-// 	Swagger
+    // 	Swagger
     implementation("org.springdoc:springdoc-openapi-data-rest:1.6.0")
     implementation("org.springdoc:springdoc-openapi-ui:1.6.0")
     implementation("org.springdoc:springdoc-openapi-kotlin:1.6.0")

@@ -1,3 +1,5 @@
+application:
+  title: "UserService"
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -38,3 +40,6 @@ management:
     web:
       exposure:
         include: "health,metrics"
+
+logstash:
+  address: elk:5055

@@ -1,3 +1,5 @@
+application:
+  title: "CourseService"
 spring:
   data:
     mongodb:
@@ -30,3 +32,6 @@ management:
     web:
       exposure:
         include: "health,metrics"
+
+logstash:
+  address: localhost:5055

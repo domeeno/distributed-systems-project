@@ -4,7 +4,6 @@ import com.pandora.courseservice.exceptions.ApiException
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
-import org.eclipse.jetty.server.Request
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Configuration
 import org.springframework.dao.DataIntegrityViolationException
@@ -31,7 +30,7 @@ class RequestLoggingAspect {
 
         val headers = request.headerNames.toList().joinToString(", ") { "\n$it: ${request.getHeader(it)}" }
 
-        val originUri = (request as Request).originalURI
+        val originUri = request.requestURL
 
         if (dto != null) {
             logger.info("REQUEST REQUEST-ID: $requestId: ${request.method} $originUri \nheaders: {$headers\n} \nREQUEST BODY: $dto")

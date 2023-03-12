@@ -1,7 +1,6 @@
 package com.pandora.userservice.aop
 
 import org.aspectj.lang.annotation.Pointcut
-import org.springframework.stereotype.Component
 
 class Pointcuts {
 

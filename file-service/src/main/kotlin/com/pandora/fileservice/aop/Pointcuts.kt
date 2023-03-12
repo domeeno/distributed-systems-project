@@ -4,7 +4,7 @@ import org.aspectj.lang.annotation.Pointcut
 
 class Pointcuts {
 
-    @Pointcut("execution(* com.pandora.fileservice.controllers.*.*(..)) ")
+    @Pointcut("execution(* com.pandora.fileservice.controller.*.*(..)) ")
     fun controllerPointcut() {}
 
     @Pointcut("within(@org.springframework.stereotype.Service *)")

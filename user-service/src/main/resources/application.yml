@@ -1,3 +1,5 @@
+application:
+  title: "UserService"
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -15,7 +17,7 @@ spring:
   banner:
     location: classpath:banner.txt
 server:
-  port: 8443
+  port: 8446
 
 security:
   jwt:
@@ -38,4 +40,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: "health,metrics"
+        include: "*"
+
+logstash:
+  address: localhost:5055
