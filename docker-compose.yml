@@ -116,6 +116,18 @@ services:
       - pandora
     restart: unless-stopped
 
+  elk:
+    image: sebp/elk
+    ports:
+      - "5601:5601"
+      - "9200:9200"
+      - "5044:5044"
+      - "5055:5055"
+    restart: unless-stopped
+    networks:
+      - pandora
+    container_name: elk
+
 networks:
   pandora:
     driver: bridge
