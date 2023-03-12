@@ -7,7 +7,6 @@ import com.pandora.userservice.models.toPrivate
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
-import org.eclipse.jetty.server.Request
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Configuration
 import org.springframework.dao.DataIntegrityViolationException
@@ -34,21 +33,21 @@ class RequestLoggingAspect {
 
         val headers = request.headerNames.toList().joinToString(", ") { "\n$it: ${request.getHeader(it)}" }
 
-        val originUri = (request as Request).originalURI
+        val requestURL = request.requestURL
 
         if (dto != null) {
-            logger.info("REQUEST REQUEST-ID: $requestId: ${request.method} $originUri \nheaders: {$headers\n} \nREQUEST BODY: $dto")
+            logger.info("REQUEST REQUEST-ID: $requestId: ${request.method} $requestURL \nheaders: {$headers\n} \nREQUEST BODY: $dto")
         } else {
-            logger.info("REQUEST REQUEST-ID: $requestId: ${request.method} $originUri \nheaders: {$headers\n}")
+            logger.info("REQUEST REQUEST-ID: $requestId: ${request.method} $requestURL \nheaders: {$headers\n}")
         }
 
         var returnValue: Any
 
         try {
             returnValue = joinPoint.proceed()
-            logger.info("RESPONSE REQUEST-ID: $requestId: ${response?.status} $originUri \nRESPONSE BODY: $returnValue")
+            logger.info("RESPONSE REQUEST-ID: $requestId: ${response?.status} $requestURL \nRESPONSE BODY: $returnValue")
         } catch (e: Exception) {
-            logger.error("RESPONSE REQUEST-ID: $requestId: ${response?.status} $originUri")
+            logger.error("RESPONSE REQUEST-ID: $requestId: ${response?.status} $requestURL")
             when (e) {
                 is ApiException -> throw e
                 is DataIntegrityViolationException -> throw ApiException(
@@ -74,20 +73,19 @@ class RequestLoggingAspect {
 
         val headers = request.headerNames.toList().joinToString(", ") { "\n$it: ${request.getHeader(it)}" }
 
-        val originUri = (request as Request).originalURI
-
+        val requestURL = request.requestURL
         when (dto) {
-            is UserLoginDTO -> logger.info("REQUEST REQUEST-ID: $requestId: ${request.method} $originUri \nheaders: {$headers\n} \nREQUEST BODY: ${dto.toPrivate()}")
-            is UserDTO -> logger.info("REQUEST REQUEST-ID: $requestId: ${request.method} $originUri \nheaders: {$headers\n} \nREQUEST BODY: ${dto.toPrivate()}")
+            is UserLoginDTO -> logger.info("REQUEST REQUEST-ID: $requestId: ${request.method} $requestURL \nheaders: {$headers\n} \nREQUEST BODY: ${dto.toPrivate()}")
+            is UserDTO -> logger.info("REQUEST REQUEST-ID: $requestId: ${request.method} $requestURL \nheaders: {$headers\n} \nREQUEST BODY: ${dto.toPrivate()}")
         }
 
         var returnValue: Any
 
         try {
             returnValue = joinPoint.proceed()
-            logger.info("RESPONSE REQUEST-ID: $requestId: ${response?.status} $originUri \nRESPONSE BODY: $returnValue")
+            logger.info("RESPONSE REQUEST-ID: $requestId: ${response?.status} $requestURL \nRESPONSE BODY: $returnValue")
         } catch (e: Exception) {
-            logger.error("RESPONSE REQUEST-ID: $requestId: ${response?.status} $originUri Exception: {${e.message}}")
+            logger.error("RESPONSE REQUEST-ID: $requestId: ${response?.status} $requestURL Exception: {${e.message}}")
             when (e) {
                 is ApiException -> throw e
                 is DataIntegrityViolationException -> throw ApiException("Data Integrity exception: " + e.cause?.cause?.message, null, HttpStatus.INTERNAL_SERVER_ERROR)

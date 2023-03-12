@@ -15,7 +15,7 @@ spring:
   banner:
     location: classpath:banner.txt
 server:
-  port: 8443
+  port: 8446
 
 security:
   jwt:
@@ -38,4 +38,16 @@ management:
   endpoints:
     web:
       exposure:
-        include: "health,metrics"
+        include: "*"
+
+logging:
+  file:
+    name: "./user.log"
+  path: "."
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n"
+    file: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n"
+
+logstash:
+  host: "localhost"
+  port: "5055"

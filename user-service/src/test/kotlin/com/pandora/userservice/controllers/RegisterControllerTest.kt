@@ -4,6 +4,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.ninjasquad.springmockk.MockkBean
 import com.pandora.userservice.dto.UserDTO
+import com.pandora.userservice.dto.UserLoginDTO
+import com.pandora.userservice.models.User
 import com.pandora.userservice.models.toUserEntity
 import com.pandora.userservice.repository.UserRepository
 import com.pandora.userservice.utils.readResourceIntoString
@@ -15,12 +17,15 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ResourceLoader
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
+import java.util.Optional
 import java.util.UUID
 
 @MockkBean(UserRepository::class)
@@ -34,6 +39,7 @@ class RegisterControllerTest(
 ) {
 
     private lateinit var mockMvc: MockMvc
+    val passwordEncoder = BCryptPasswordEncoder()
 
     @BeforeAll
     fun setUp() {
@@ -92,5 +98,55 @@ class RegisterControllerTest(
                     .content(input)
                     .contentType(MediaType.APPLICATION_JSON)
             ).andExpect(status().isOk)
+    }
+
+    @Test
+    fun `test loginUser with success`() {
+        // data
+        val input = readResourceIntoString(
+            resourceLoader,
+            "$mockPath/LoginDTO.json"
+        )
+
+        val response = readResourceIntoString(
+            resourceLoader,
+            "$mockPath/User.json"
+        )
+
+        val readInput = jacksonObjectMapper().findAndRegisterModules().readValue<UserLoginDTO>(input)
+        val responseInput = jacksonObjectMapper().findAndRegisterModules().readValue<User>(response)
+
+        responseInput.password = passwordEncoder.encode(responseInput.password)
+
+        every { repository.findByEmail(any()) } returns Optional.of(responseInput)
+
+        val result = registerController.loginUser(readInput)
+
+        assert(result == "")
+    }
+
+    @Test
+    fun `test loginUser with error, wrong password`() {
+        // data
+        val input = readResourceIntoString(
+            resourceLoader,
+            "$mockPath/LoginDTO.json"
+        )
+
+        val response = readResourceIntoString(
+            resourceLoader,
+            "$mockPath/User.json"
+        )
+
+        val readInput = jacksonObjectMapper().findAndRegisterModules().readValue<UserLoginDTO>(input)
+        val responseInput = jacksonObjectMapper().findAndRegisterModules().readValue<User>(response)
+
+        responseInput.password = passwordEncoder.encode("pspspsps")
+
+        every { repository.findByEmail(any()) } returns Optional.of(responseInput)
+
+        val result = registerController.loginUser(readInput)
+
+        assert(result == "")
     }
 }

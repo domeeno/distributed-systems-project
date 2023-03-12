@@ -39,57 +39,6 @@ class UserControllerTest(
     }
 
     @Test
-    fun `test loginUser with success`() {
-        // data
-        val input = readResourceIntoString(
-            resourceLoader,
-            "$mockPath/LoginDTO.json"
-        )
-
-        val response = readResourceIntoString(
-            resourceLoader,
-            "$mockPath/User.json"
-        )
-
-        val readInput = jacksonObjectMapper().findAndRegisterModules().readValue<UserLoginDTO>(input)
-        val responseInput = jacksonObjectMapper().findAndRegisterModules().readValue<User>(response)
-
-        responseInput.password = passwordEncoder.encode(responseInput.password)
-
-        every { repository.findByEmail(any()) } returns Optional.of(responseInput)
-
-        val result = userController.loginUser(readInput)
-
-        assert(result.statusCode == HttpStatus.OK)
-    }
-
-    @Test
-    fun `test loginUser with error, wrong password`() {
-        // data
-        val input = readResourceIntoString(
-            resourceLoader,
-            "$mockPath/LoginDTO.json"
-        )
-
-        val response = readResourceIntoString(
-            resourceLoader,
-            "$mockPath/User.json"
-        )
-
-        val readInput = jacksonObjectMapper().findAndRegisterModules().readValue<UserLoginDTO>(input)
-        val responseInput = jacksonObjectMapper().findAndRegisterModules().readValue<User>(response)
-
-        responseInput.password = passwordEncoder.encode("pspspsps")
-
-        every { repository.findByEmail(any()) } returns Optional.of(responseInput)
-
-        val result = userController.loginUser(readInput)
-
-        assert(result.statusCode == HttpStatus.INTERNAL_SERVER_ERROR)
-        assert(result.body == "Wrong username or password")
-    }
-
-    @Test
     fun editUser() {
     }
 }
