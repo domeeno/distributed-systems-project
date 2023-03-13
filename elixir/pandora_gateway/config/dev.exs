@@ -19,19 +19,3 @@ config :pandora_gateway,
       port: 4040
     }
   }
-
-config :logger,
-  backends: [
-    :console,
-    {LogstashJson.TCP, :logstash}
-  ]
-
-config :logger, :logstash,
-  level: :info,
-  fields: %{application: "Gateway"},
-  formatter: {AppLogger, :formatter},
-  host: {:system, "LOGSTASH_TCP_HOST", "localhost"},
-  port: {:system, "LOGSTASH_TCP_PORT", "5055"},
-  workers: 2,
-  buffer_size: 10_000
-

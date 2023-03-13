@@ -22,11 +22,9 @@ defmodule Router.User do
 
   get ":user_id/info" do
     {status, body} =
-      handle_response(
-        GenServer.call(
-          :userservice,
-          {:get_request, "user/#{user_id}/info"}
-        )
+      GenServer.call(
+        :userservice,
+        {:get_request, "user/#{user_id}/info"}
       )
 
     respond(conn, status, body)
@@ -34,11 +32,9 @@ defmodule Router.User do
 
   post "/register" do
     {status, body} =
-      handle_response(
-        GenServer.call(
-          :userservice,
-          {:post_request, "/register", Poison.encode!(conn.body_params)}
-        )
+      GenServer.call(
+        :userservice,
+        {:post_request, "/register", Poison.encode!(conn.body_params)}
       )
 
     respond(conn, status, body)
@@ -46,29 +42,12 @@ defmodule Router.User do
 
   post "/login" do
     {status, body} =
-      handle_response(
-        GenServer.call(
-          :userservice,
-          {:post_request, "/user/login", Poison.encode!(conn.body_params)}
-        )
+      GenServer.call(
+        :userservice,
+        {:post_request, "/user/login", Poison.encode!(conn.body_params)}
       )
 
     respond(conn, status, body)
-  end
-
-  # TODO handle this duplication later
-  defp handle_response(response) do
-    case response do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        {200, body}
-
-      {:ok, %HTTPoison.Response{status_code: 404}} ->
-        {404, "Not found :("}
-
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.error(reason)
-        {500, "Something went wrong"}
-    end
   end
 
   defp respond(conn, code, body) do

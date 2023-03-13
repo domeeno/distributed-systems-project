@@ -22,6 +22,7 @@ defmodule Router.Discovery do
 
   get "/:service" do
     Logger.info("[DISCOVERY]: registering #{service} service")
+
     address =
       "http://" <>
         to_string(:inet_parse.ntoa(conn.remote_ip)) <> ":" <> conn.params["port"]

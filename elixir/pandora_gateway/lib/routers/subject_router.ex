@@ -20,18 +20,23 @@ defmodule Router.Subject do
 
   plug(:dispatch)
 
+  @doc ~S"""
+    Get Subject tree, 
+
+    returns a nested JSON file with all the topics
+
+    Cached
+  """
   get "/:id" do
     case GenServer.call(:cache_server, {:query, "subject", id}) do
       {:found, data} ->
         respond(conn, 200, data)
 
-        _ ->
+      _ ->
         {status, body} =
-          handle_response(
-            GenServer.call(
-              :subject,
-              {:get_request, "/subject/#{id}"}
-            )
+          GenServer.call(
+            :subject,
+            {:get_request, "/subject/#{id}"}
           )
 
         Logger.info("Caching subject: #{id}")
@@ -40,44 +45,100 @@ defmodule Router.Subject do
     end
   end
 
-  post "/topic" do
+  @doc ~S"""
+    Get All topics from all subjects, test rquest 
+  """
+  get "/topic" do
     {status, body} =
-      handle_response(
-        GenServer.call(
-          :subject,
-          {:post_request, "/topic", Poison.encode!(conn.body_params)}
-        )
+      GenServer.call(
+        :subject,
+        {:get_request, "subject/topic"}
       )
 
     respond(conn, status, body)
   end
 
-  # TODO maybe abstract to not have duplication
+  @doc ~S"""
+    Create a subject and store it's id in a user's subject list 
+  """
   post "/:userSubjectsId/user/:userId" do
-    {status, body} = 
-      handle_response(
-        GenServer.call(
-          :subject,
-          {:post_request, "/#{userSubjectsId}/user/#{userId}", }
-        )
+    {status, body} =
+      GenServer.call(
+        :subject,
+        {:post_request, "/#{userSubjectsId}/user/#{userId}", Poison.encode!(conn.body_params)}
       )
 
     respond(conn, status, body)
   end
 
-  # TODO handle this duplication later
-  defp handle_response(response) do
-    case response do
-      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        {200, body}
+  @doc ~S"""
+    Create a topic, specifying the subject and parent topic it belongs to.
 
-      {:ok, %HTTPoison.Response{status_code: 404}} ->
-        {404, "Not found :("}
+    Removes cached subject tree
+  """
+  post "/:subjectId/parent/:topicId" do
+    # Subject tree gets updated so we delete the entry in cache if exists
+    GenServer.call(:cache_server, {:delete, "subject", subjectId})
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.error(%{response: response, reason: reason})
-        {500, "Something went wrong"}
-    end
+    {status, body} =
+      GenServer.call(
+        :subject,
+        {:post_request, "/#{subjectId}/parent/#{topicId}"}
+      )
+
+    respond(conn, status, body)
+  end
+
+  @doc ~S"""
+    add a subject to user's liked list
+  """
+  put "user/:likedId/like/:subjectId" do
+    {status, body} =
+      GenServer.call(
+        :subject,
+        {:put_request, "user/#{likedId}/like/#{subjectId}", Poison.encode!(conn.body_params)}
+      )
+
+    respond(conn, status, body)
+  end
+
+  @doc ~S"""
+    get user created subjects list 
+  """
+  get "user/subjects/:id" do
+    {status, body} =
+      GenServer.call(
+        :subject,
+        {:get_request, "/user/subjects/#{id}"}
+      )
+
+    respond(conn, status, body)
+  end
+
+  @doc ~S"""
+    get user saved subjects list 
+  """
+  get "user/saves/:id" do
+    {status, body} =
+      GenServer.call(
+        :subject,
+        {:get_request, "/user/saves/#{id}"}
+      )
+
+    respond(conn, status, body)
+  end
+
+  @doc ~S"""
+    get user saved subjects list 
+  """
+  get "user/likes/:id" do
+    {status, body} =
+      GenServer.call(
+        :subject,
+        {:get_request, "/user/likes/#{id}"}
+      )
+
+    respond(conn, status, body)
   end
 
   defp respond(conn, code, body) do

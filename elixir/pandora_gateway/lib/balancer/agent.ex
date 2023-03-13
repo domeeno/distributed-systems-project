@@ -25,22 +25,74 @@ defmodule LoadBalancer.Agent do
 
   def handle_call({:get_request, url}, _from, state) do
     address = Enum.at(state.alive_addrs, state.addr_index) <> url
-    IO.inspect(address)
-    response = HTTPoison.get(address)
-    IO.inspect(response)
-    {:reply, response, Map.put(state, :addr_index, switch_port(state))}
+
+    requestId = UUID.uuid4()
+    Logger.info("FORWARD REQUEST-ID: #{requestId} routing GET to #{address}")
+
+    {status, body} = handle_response(HTTPoison.get(address), requestId)
+
+    {:reply, {status, body}, Map.put(state, :addr_index, switch_port(state))}
   end
 
   def handle_call({:post_request, url, params}, _from, state) do
     address = Enum.at(state.alive_addrs, state.addr_index) <> url
-    IO.inspect(address)
 
-    response =
-      HTTPoison.post(address, params, [
-        {"Content-Type", "application/json"}
-      ])
+    requestId = UUID.uuid4()
+    Logger.info("FORWARD REQUEST-ID: #{requestId} routing POST to #{address}")
 
-    {:reply, response, Map.put(state, :addr_index, switch_port(state))}
+    {status, body} =
+      handle_response(
+        HTTPoison.post(address, params, [
+          {"Content-Type", "application/json"}
+        ]),
+        requestId
+      )
+
+    {:reply, {status, body}, Map.put(state, :addr_index, switch_port(state))}
+  end
+
+  def handle_call({:put_request, url, params}, _from, state) do
+    address = Enum.at(state.alive_addrs, state.addr_index) <> url
+
+    requestId = UUID.uuid4()
+    Logger.info("FORWARD REQUEST-ID: #{requestId} routing PUT to #{address}")
+
+    {status, body} =
+      handle_response(
+        HTTPoison.put(address, params, [
+          {"Content-Type", "application/json"}
+        ]),
+        requestId
+      )
+
+    {:reply, {status, body}, Map.put(state, :addr_index, switch_port(state))}
+  end
+
+  def handle_call({:delete_request, url}, _from, state) do
+    address = Enum.at(state.alive_addrs, state.addr_index) <> url
+
+    requestId = UUID.uuid4()
+    Logger.info("FORWARD REQUEST-ID: #{requestId} routing DELETE to #{address}")
+
+    {status, body} = handle_response(HTTPoison.delete(address), requestId)
+
+    {:reply, {status, body}, Map.put(state, :addr_index, switch_port(state))}
+  end
+
+  defp handle_response(response, requestId) do
+    case response do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        Logger.info("FORWARD REQUEST-ID: #{requestId} #{200} response: #{body}")
+        {200, body}
+
+      {:ok, %HTTPoison.Response{status_code: 404}} ->
+        Logger.info("FORWARD REQUEST-ID: #{requestId} #{404} NOT FOUND")
+        {404, "Not found :("}
+
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        Logger.error("FORWARD REQUEST-ID: #{requestId} #{500} reason: #{reason}")
+        {500, "Something went wrong"}
+    end
   end
 
   defp switch_port(state) do
