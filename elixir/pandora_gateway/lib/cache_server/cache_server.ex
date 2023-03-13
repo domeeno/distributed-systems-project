@@ -102,6 +102,27 @@ defmodule Cache.CacheServer do
     end
   end
 
+  def handle_call({:delete, bucket, key}, _from, state) do
+    Logger.info("Deleting key #{key}: #{bucket}")
+    opts = [:binary, packet: :line, active: false]
+    {:ok, socket} = connect_socket('#{state.address}', state.port, opts)
+
+    operation = "0|0|del|#{bucket}|#{key}|\r\n"
+    :ok = :gen_tcp.send(socket, operation)
+
+    response = receive_data(socket, "")
+
+    case String.split(response, "|") do
+      ["OK", data, _] ->
+        Logger.info("Deleted #{key} cache in bucket: \"#{bucket}\"")
+        {:reply, {:ok, data}, state}
+
+      _ ->
+        Logger.error("Error deleting in #{bucket}: #{key}")
+        {:reply, {:error}, state}
+    end
+  end
+
   defp create_bucket(bucket, socket) do
     Logger.info("bucket: \"#{bucket}\", not found. Creating \"#{bucket}\"")
     response = send_and_recv(socket, "0|0|create|#{bucket}|\r\n")

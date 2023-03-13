@@ -15,7 +15,7 @@ config :pandora_gateway,
   app: %{
     port: 4000,
     cache: %{
-      address: "cache",
+      address: "localhost",
       port: 4040
     }
   }

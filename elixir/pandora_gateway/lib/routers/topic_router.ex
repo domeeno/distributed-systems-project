@@ -1,4 +1,4 @@
-defmodule Router.User do
+defmodule Router.Topic do
   use Plug.Router
   require Logger
 
@@ -20,41 +20,42 @@ defmodule Router.User do
 
   plug(:dispatch)
 
-  get ":user_id/info" do
+  @doc ~S"""
+    Get All topics from all subjects, test rquest 
+  """
+  get "/" do
     {status, body} =
       GenServer.call(
-        :userservice,
-        {:get_request, "user/#{user_id}/info"}
+        :subject,
+        {:get_request, "/topic"}
       )
 
     respond(conn, status, body)
   end
 
-  post "/register" do
+  @doc ~S"""
+    Create a topic, specifying the subject and parent topic it belongs to.
+
+    Removes cached subject tree
+  """
+  post "/:topic_id/subject/:subject_id" do
+    # Subject tree gets updated so we delete the entry in cache if exists
+    GenServer.call(:cache_server, {:delete, "subject", subject_id})
+
     {status, body} =
       GenServer.call(
-        :userservice,
-        {:post_request, "/register", Poison.encode!(conn.body_params)}
+        :subject,
+        {:post_request, "/topic/parent/#{topic_id}"}
       )
 
     respond(conn, status, body)
   end
 
-  post "/login" do
+  get "/:id" do
     {status, body} =
       GenServer.call(
-        :userservice,
-        {:post_request, "/user/login", Poison.encode!(conn.body_params)}
-      )
-
-    respond(conn, status, body)
-  end
-
-  put ":user_id" do
-    {status, body} =
-      GenServer.call(
-        :userservice,
-        {:put_request, "user/#{user_id}", Poison.encode!(conn.body_params)}
+        :subject,
+        {:get_request, "/topic/#{id}"}
       )
 
     respond(conn, status, body)

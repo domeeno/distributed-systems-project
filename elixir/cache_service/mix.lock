@@ -1,0 +1,6 @@
+%{
+  "blocking_queue": {:hex, :blocking_queue, "1.3.0", "dc89343242db43b3a5618c41b258795f8e8258ec528a763e70ceb2763bd96b92", [:mix], [], "hexpm", "10f2b942a29f83c3bfef6285096d7f42028201c89f317c731e708b528a7fc17d"},
+  "connection": {:hex, :connection, "1.0.4", "a1cae72211f0eef17705aaededacac3eb30e6625b04a6117c1b2db6ace7d5976", [:mix], [], "hexpm", "4a0850c9be22a43af9920a71ab17c051f5f7d45c209e40269a1938832510e4d9"},
+  "logstash_json": {:hex, :logstash_json, "0.7.5", "a23d300631496d23e25f110ed3d9a7f4b54177cb76437de184e526ca63341367", [:mix], [{:blocking_queue, "~> 1.3.0", [hex: :blocking_queue, repo: "hexpm", optional: false]}, {:connection, "~> 1.0.4", [hex: :connection, repo: "hexpm", optional: false]}, {:poison, ">= 1.0.0", [hex: :poison, repo: "hexpm", optional: false]}], "hexpm", "2ad7dba142e7fcb337bbb3a6f78eef1d0c7c2c403f1d4f90e983c4013d18715c"},
+  "poison": {:hex, :poison, "5.0.0", "d2b54589ab4157bbb82ec2050757779bfed724463a544b6e20d79855a9e43b24", [:mix], [{:decimal, "~> 2.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm", "11dc6117c501b80c62a7594f941d043982a1bd05a1184280c0d9166eb4d8d3fc"},
+}
