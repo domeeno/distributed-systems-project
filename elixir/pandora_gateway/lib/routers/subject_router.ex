@@ -102,7 +102,8 @@ defmodule Router.Subject do
     {status, body} =
       GenServer.call(
         :subject,
-        {:request, :put_request, "/user/#{liked_id}/like/#{subject_id}", Poison.encode!(conn.body_params)}
+        {:request, :put_request, "/user/#{liked_id}/like/#{subject_id}",
+         Poison.encode!(conn.body_params)}
       )
 
     respond(conn, status, body)

@@ -33,7 +33,8 @@ defmodule LoadBalancer.Agent do
 
     {status, body} = make_request(request_type, address, params, request_id)
 
-    {status, body} = if (status != 200) do
+    {status, body} =
+      if status != 200 do
         reroute_request(
           request_type,
           url,
@@ -42,9 +43,9 @@ defmodule LoadBalancer.Agent do
           request_id,
           @reroutes
         )
-    else 
-      {status, body}
-    end
+      else
+        {status, body}
+      end
 
     {:reply, {status, body}, Map.put(state, :addr_index, switch_port(state))}
   end
@@ -68,7 +69,8 @@ defmodule LoadBalancer.Agent do
 
     {status, body} = make_request(method, address, params, request_id)
 
-    {status, body} = if (status != 200) do
+    {status, body} =
+      if status != 200 do
         reroute_request(
           method,
           url,
@@ -77,9 +79,9 @@ defmodule LoadBalancer.Agent do
           request_id,
           reroutes - 1
         )
-    else
-      {status, body}
-    end
+      else
+        {status, body}
+      end
 
     {status, body}
   end
@@ -200,13 +202,16 @@ defmodule LoadBalancer.Agent do
 
       {:ok, error_response} ->
         IO.inspect(error_response)
-        Logger.error("FORWARD REQUEST-ID: #{request_id} #{error_response.status_code} reason: #{error_response.body}")
+
+        Logger.error(
+          "FORWARD REQUEST-ID: #{request_id} #{error_response.status_code} reason: #{error_response.body}"
+        )
+
         {error_response.status_code, error_response.body}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
         Logger.error("FORWARD REQUEST-ID: #{request_id} #{500} reason: #{reason}")
         {500, "Something went wrong"}
-
     end
   end
 
