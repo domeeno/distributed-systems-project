@@ -18,4 +18,5 @@ config :pandora_gateway,
       address: "localhost",
       port: 4040
     }
-  }
+  },
+  reroutes: 5

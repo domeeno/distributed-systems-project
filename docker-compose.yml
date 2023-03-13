@@ -35,6 +35,32 @@ services:
       - pandora
     container_name: course-service
 
+  course-service-a:
+    image: p-course 
+    ports:
+      - "8454:8444"
+    depends_on:
+      - mongo
+      - gateway
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - pandora
+    container_name: course-service-a
+
+  course-service-failing:
+    image: p-course-faulty 
+    ports:
+      - "8464:8444"
+    depends_on:
+      - mongo
+      - gateway
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - pandora
+    container_name: course-service-failing
+
   user-service:
     image: p-user
     ports:
@@ -47,6 +73,19 @@ services:
     networks:
       - pandora
     container_name: user-service
+  
+  user-service-failing:
+    image: p-user-faulty
+    ports:
+      - "8453:8443"
+    depends_on:
+      - mongo
+      - gateway
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - pandora
+    container_name: user-service-failing
 
   file-service:
     image: p-bucket

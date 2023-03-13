@@ -27,7 +27,7 @@ defmodule Router.Topic do
     {status, body} =
       GenServer.call(
         :subject,
-        {:get_request, "/topic"}
+        {:request, :get_request, "/topic", ""}
       )
 
     respond(conn, status, body)
@@ -45,7 +45,7 @@ defmodule Router.Topic do
     {status, body} =
       GenServer.call(
         :subject,
-        {:post_request, "/topic/parent/#{topic_id}"}
+        {:request, :post_request, "/topic/parent/#{topic_id}", Poison.encode!(conn.body_params)}
       )
 
     respond(conn, status, body)
@@ -55,7 +55,7 @@ defmodule Router.Topic do
     {status, body} =
       GenServer.call(
         :subject,
-        {:get_request, "/topic/#{id}"}
+        {:request, :get_request, "/topic/#{id}", ""}
       )
 
     respond(conn, status, body)
