@@ -33,8 +33,7 @@ defmodule LoadBalancer.Agent do
 
     {status, body} = make_request(request_type, address, params, request_id)
 
-    if status != 200 do
-      {new_status, new_body} =
+    {status, body} = if (status != 200) do
         reroute_request(
           request_type,
           url,
@@ -43,9 +42,8 @@ defmodule LoadBalancer.Agent do
           request_id,
           @reroutes
         )
-
-      status = new_status
-      body = new_body
+    else 
+      {status, body}
     end
 
     {:reply, {status, body}, Map.put(state, :addr_index, switch_port(state))}
@@ -62,7 +60,6 @@ defmodule LoadBalancer.Agent do
   end
 
   defp reroute_request(method, url, params, state, request_id, reroutes) do
-    IO.inspect(state)
     address = Enum.at(state.alive_addrs, state.addr_index) <> url
 
     Logger.info(
@@ -71,8 +68,7 @@ defmodule LoadBalancer.Agent do
 
     {status, body} = make_request(method, address, params, request_id)
 
-    if status != 200 do
-      {new_status, new_body} =
+    {status, body} = if (status != 200) do
         reroute_request(
           method,
           url,
@@ -81,9 +77,8 @@ defmodule LoadBalancer.Agent do
           request_id,
           reroutes - 1
         )
-
-      status = new_status
-      body = new_body
+    else
+      {status, body}
     end
 
     {status, body}
@@ -194,6 +189,10 @@ defmodule LoadBalancer.Agent do
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         Logger.info("FORWARD REQUEST-ID: #{request_id} #{404} NOT FOUND")
         {404, "Not found :("}
+
+      {:ok, %HTTPoison.Response{status_code: 418}} ->
+        Logger.info("FORWARD REQUEST-ID: #{request_id} #{418} I'm a teapot")
+        {418, "I'm a teapot"}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
         Logger.error("FORWARD REQUEST-ID: #{request_id} #{500} reason: #{reason}")

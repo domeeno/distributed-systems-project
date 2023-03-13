@@ -22,7 +22,7 @@ defmodule Router.Subject do
 
   get "search" do
     uri =
-      "subject/search"
+      "/subject/search"
       |> URI.parse()
       |> Map.put(:query, URI.encode_query(conn.query_params))
       |> URI.to_string()
@@ -30,7 +30,7 @@ defmodule Router.Subject do
     {status, body} =
       GenServer.call(
         :subject,
-        {:get_request, uri}
+        {:request, :get_request, uri, ""}
       )
 
     respond(conn, 200, body)
@@ -52,7 +52,7 @@ defmodule Router.Subject do
         {status, body} =
           GenServer.call(
             :subject,
-            {:get_request, "/subject/#{id}"}
+            {:request, :get_request, "/subject/#{id}", ""}
           )
 
         Logger.info("Caching subject: #{id}")
@@ -65,7 +65,7 @@ defmodule Router.Subject do
     {status, body} =
       GenServer.call(
         :subject,
-        {:put_request, "/subject/#{id}", Poison.encode!(conn.body_params)}
+        {:request, :put_request, "/subject/#{id}", Poison.encode!(conn.body_params)}
       )
 
     respond(conn, status, body)
@@ -75,7 +75,7 @@ defmodule Router.Subject do
     {status, body} =
       GenServer.call(
         :subject,
-        {:delete_request, "/subject/#{id}"}
+        {:request, :delete_request, "/subject/#{id}", ""}
       )
 
     respond(conn, status, body)
@@ -88,7 +88,7 @@ defmodule Router.Subject do
     {status, body} =
       GenServer.call(
         :subject,
-        {:post_request, "/subject/#{user_subjects_id}/user/#{user_id}",
+        {:request, :post_request, "/subject/#{user_subjects_id}/user/#{user_id}",
          Poison.encode!(conn.body_params)}
       )
 
@@ -102,7 +102,7 @@ defmodule Router.Subject do
     {status, body} =
       GenServer.call(
         :subject,
-        {:put_request, "user/#{liked_id}/like/#{subject_id}", Poison.encode!(conn.body_params)}
+        {:request, :put_request, "/user/#{liked_id}/like/#{subject_id}", Poison.encode!(conn.body_params)}
       )
 
     respond(conn, status, body)
@@ -115,7 +115,7 @@ defmodule Router.Subject do
     {status, body} =
       GenServer.call(
         :subject,
-        {:get_request, "/user/subjects/#{id}"}
+        {:request, :get_request, "/user/subjects/#{id}", ""}
       )
 
     respond(conn, status, body)
@@ -128,7 +128,7 @@ defmodule Router.Subject do
     {status, body} =
       GenServer.call(
         :subject,
-        {:get_request, "/user/saves/#{id}"}
+        {:request, :get_request, "/user/saves/#{id}", ""}
       )
 
     respond(conn, status, body)
@@ -141,7 +141,7 @@ defmodule Router.Subject do
     {status, body} =
       GenServer.call(
         :subject,
-        {:get_request, "/user/likes/#{id}"}
+        {:request, :get_request, "/user/likes/#{id}", ""}
       )
 
     respond(conn, status, body)
