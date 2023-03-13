@@ -5,6 +5,7 @@ import com.pandora.courseservice.dto.LikedListDTO
 import com.pandora.courseservice.dto.SavedListDTO
 import com.pandora.courseservice.dto.SubjectListDTO
 import com.pandora.courseservice.dto.UserSubjectDTO
+import com.pandora.courseservice.exceptions.ApiException
 import com.pandora.courseservice.extensions.toSubjectIdList
 import com.pandora.courseservice.models.Liked
 import com.pandora.courseservice.models.Saved
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -63,77 +65,21 @@ class UserListController(
 
     @GetMapping("/likes/{id}")
     fun getUserLikes(@PathVariable id: String): LikedListDTO {
-        val likedList = likedRepository.findById(id).get().toSubjectIdList()
-
-        val query = Query(Criteria.where("id").`in`(likedList))
-
-        val result = mongoTemplate.find(query, Subject::class.java)
-
-        val likedListDTO = LikedListDTO(
-            userLikes = result.map {
-                val likedDTO = UserSubjectDTO(subjectName = it.subjectName, subjectId = it.id)
-                likedDTO
-            }
-        )
-
-        return likedListDTO
+        throw ApiException("Deliberate Error", null, HttpStatus.I_AM_A_TEAPOT)
     }
 
     @GetMapping("/saves/{id}")
     fun getUserSaves(@PathVariable id: String): SavedListDTO {
-        val savedList = savedRepository.findById(id).get().toSubjectIdList()
-
-        val query = Query(Criteria.where("id").`in`(savedList))
-
-        val result = mongoTemplate.find(query, Subject::class.java)
-
-        val savedListDTO = SavedListDTO(
-            userSaves = result.map {
-                val savedDTO = UserSubjectDTO(subjectName = it.subjectName, subjectId = it.id)
-                savedDTO
-            }
-        )
-
-        return savedListDTO
+        throw ApiException("Deliberate Error", null, HttpStatus.I_AM_A_TEAPOT)
     }
 
     @GetMapping("/subjects/{id}")
     fun getUserCreatedSubjects(@PathVariable id: String): SubjectListDTO {
-        val savedList = savedRepository.findById(id).get().toSubjectIdList()
-
-        val query = Query(Criteria.where("id").`in`(savedList))
-
-        val result = mongoTemplate.find(query, Subject::class.java)
-
-        val subjectListDTO = SubjectListDTO(
-            userSubjects = result.map {
-                val savedDTO = UserSubjectDTO(subjectName = it.subjectName, subjectId = it.id)
-                savedDTO
-            }
-        )
-
-        return subjectListDTO
+        throw ApiException("Deliberate Error", null, HttpStatus.I_AM_A_TEAPOT)
     }
 
     @PutMapping("{likedId}/like/{subjectId}")
     fun addToUserLikedSubjects(@PathVariable likedId: String, @PathVariable subjectId: String): String {
-        val liked = likedRepository.findById(likedId).get()
-
-        val subject = subjectRepository.findById(subjectId).get()
-
-        val newLiked = Liked()
-        newLiked.id = liked.id
-        if (liked.likedList.contains(subjectId)) {
-            newLiked.likedList = liked.likedList.filter { it == subjectId }
-        } else {
-            liked.likedList.toMutableList().add(subjectId)
-            newLiked.likedList = liked.likedList
-        }
-        likedRepository.save(newLiked)
-
-        subject.likes += 1
-        subjectRepository.save(subject)
-
-        return subjectId
+        throw ApiException("Deliberate Error", null, HttpStatus.I_AM_A_TEAPOT)
     }
 }

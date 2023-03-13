@@ -3,9 +3,11 @@ package com.pandora.courseservice.controllers
 import com.pandora.courseservice.dto.SubjectDTO
 import com.pandora.courseservice.dto.SubjectSearchDTO
 import com.pandora.courseservice.dto.SubjectTreeDTO
+import com.pandora.courseservice.exceptions.ApiException
 import com.pandora.courseservice.models.Subject
 import com.pandora.courseservice.service.SubjectService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -24,7 +26,7 @@ class SubjectController(
 
     @GetMapping
     fun getAllSubjects(): List<Subject> {
-        return subjectService.getAllSubjects()
+        throw ApiException("Deliberate Error", null, HttpStatus.I_AM_A_TEAPOT)
     }
 
     @GetMapping("search")
@@ -33,12 +35,12 @@ class SubjectController(
         @RequestParam size: Int,
         @RequestParam input: String?
     ): List<SubjectSearchDTO> {
-        return subjectService.getSubjects(page, size, input)
+        throw ApiException("Deliberate Error", null, HttpStatus.I_AM_A_TEAPOT)
     }
 
     @GetMapping("{subjectId}")
     fun getSubjectTree(@PathVariable subjectId: String): SubjectTreeDTO {
-        return subjectService.getSubjectTree(subjectId)
+        throw ApiException("Deliberate Error", null, HttpStatus.I_AM_A_TEAPOT)
     }
 
     @PostMapping("{userSubjectId}/user/{userId}")
@@ -47,7 +49,7 @@ class SubjectController(
         @PathVariable userId: String,
         @RequestBody dto: SubjectDTO
     ): String {
-        return subjectService.createSubject(userSubjectId, userId, dto)
+        throw ApiException("Deliberate Error", null, HttpStatus.I_AM_A_TEAPOT)
     }
 
     @PutMapping("{subjectId}")
@@ -55,11 +57,11 @@ class SubjectController(
         @PathVariable subjectId: String,
         @RequestBody dto: SubjectDTO
     ): String {
-        return subjectService.updateSubject(subjectId, dto)
+        throw ApiException("Deliberate Error", null, HttpStatus.I_AM_A_TEAPOT)
     }
 
     @DeleteMapping("{subjectId}")
     fun deleteSubject(@PathVariable subjectId: String): String {
-        return subjectService.deleteSubject(subjectId)
+        throw ApiException("Deliberate Error", null, HttpStatus.I_AM_A_TEAPOT)
     }
 }
