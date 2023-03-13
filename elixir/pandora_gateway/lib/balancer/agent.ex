@@ -186,17 +186,27 @@ defmodule LoadBalancer.Agent do
         Logger.info("FORWARD REQUEST-ID: #{request_id} #{200} response: #{body}")
         {200, body}
 
+      {:ok, %HTTPoison.Response{status_code: 201, body: body}} ->
+        Logger.info("FORWARD REQUEST-ID: #{request_id} #{200} response: #{body}")
+        {201, body}
+
       {:ok, %HTTPoison.Response{status_code: 404}} ->
-        Logger.info("FORWARD REQUEST-ID: #{request_id} #{404} NOT FOUND")
+        Logger.error("FORWARD REQUEST-ID: #{request_id} #{404} NOT FOUND")
         {404, "Not found :("}
 
       {:ok, %HTTPoison.Response{status_code: 418}} ->
-        Logger.info("FORWARD REQUEST-ID: #{request_id} #{418} I'm a teapot")
+        Logger.error("FORWARD REQUEST-ID: #{request_id} #{418} I'm a teapot")
         {418, "I'm a teapot"}
+
+      {:ok, error_response} ->
+        IO.inspect(error_response)
+        Logger.error("FORWARD REQUEST-ID: #{request_id} #{error_response.status_code} reason: #{error_response.body}")
+        {error_response.status_code, error_response.body}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
         Logger.error("FORWARD REQUEST-ID: #{request_id} #{500} reason: #{reason}")
         {500, "Something went wrong"}
+
     end
   end
 
