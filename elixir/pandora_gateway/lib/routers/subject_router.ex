@@ -20,6 +20,22 @@ defmodule Router.Subject do
 
   plug(:dispatch)
 
+  get "search" do
+    uri =
+      "subject/search"
+      |> URI.parse()
+      |> Map.put(:query, URI.encode_query(conn.query_params))
+      |> URI.to_string()
+
+    {status, body} =
+      GenServer.call(
+        :subject,
+        {:get_request, uri}
+      )
+
+    respond(conn, 200, body)
+  end
+
   @doc ~S"""
     Get Subject tree, 
 
@@ -45,14 +61,21 @@ defmodule Router.Subject do
     end
   end
 
-  @doc ~S"""
-    Get All topics from all subjects, test rquest 
-  """
-  get "/topic" do
+  put "/:id" do
     {status, body} =
       GenServer.call(
         :subject,
-        {:get_request, "subject/topic"}
+        {:put_request, "/subject/#{id}", Poison.encode!(conn.body_params)}
+      )
+
+    respond(conn, status, body)
+  end
+
+  delete "/:id" do
+    {status, body} =
+      GenServer.call(
+        :subject,
+        {:delete_request, "/subject/#{id}"}
       )
 
     respond(conn, status, body)
@@ -61,29 +84,12 @@ defmodule Router.Subject do
   @doc ~S"""
     Create a subject and store it's id in a user's subject list 
   """
-  post "/:userSubjectsId/user/:userId" do
+  post "/:user_subjects_id/user/:user_id" do
     {status, body} =
       GenServer.call(
         :subject,
-        {:post_request, "/#{userSubjectsId}/user/#{userId}", Poison.encode!(conn.body_params)}
-      )
-
-    respond(conn, status, body)
-  end
-
-  @doc ~S"""
-    Create a topic, specifying the subject and parent topic it belongs to.
-
-    Removes cached subject tree
-  """
-  post "/:subjectId/parent/:topicId" do
-    # Subject tree gets updated so we delete the entry in cache if exists
-    GenServer.call(:cache_server, {:delete, "subject", subjectId})
-
-    {status, body} =
-      GenServer.call(
-        :subject,
-        {:post_request, "/#{subjectId}/parent/#{topicId}"}
+        {:post_request, "/subject/#{user_subjects_id}/user/#{user_id}",
+         Poison.encode!(conn.body_params)}
       )
 
     respond(conn, status, body)
@@ -92,11 +98,11 @@ defmodule Router.Subject do
   @doc ~S"""
     add a subject to user's liked list
   """
-  put "user/:likedId/like/:subjectId" do
+  put "/user/:liked_id/like/:subject_id" do
     {status, body} =
       GenServer.call(
         :subject,
-        {:put_request, "user/#{likedId}/like/#{subjectId}", Poison.encode!(conn.body_params)}
+        {:put_request, "user/#{liked_id}/like/#{subject_id}", Poison.encode!(conn.body_params)}
       )
 
     respond(conn, status, body)
@@ -105,7 +111,7 @@ defmodule Router.Subject do
   @doc ~S"""
     get user created subjects list 
   """
-  get "user/subjects/:id" do
+  get "/user/subjects/:id" do
     {status, body} =
       GenServer.call(
         :subject,
@@ -118,7 +124,7 @@ defmodule Router.Subject do
   @doc ~S"""
     get user saved subjects list 
   """
-  get "user/saves/:id" do
+  get "/user/saves/:id" do
     {status, body} =
       GenServer.call(
         :subject,
@@ -131,7 +137,7 @@ defmodule Router.Subject do
   @doc ~S"""
     get user saved subjects list 
   """
-  get "user/likes/:id" do
+  get "/user/likes/:id" do
     {status, body} =
       GenServer.call(
         :subject,
