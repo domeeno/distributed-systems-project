@@ -21,6 +21,8 @@ defmodule Gateway.Router do
   plug(:dispatch)
 
   get "/status" do
+    Logger.info("status good")
+
     conn
     |> put_resp_content_type("application/json")
     |> send_resp(200, "all good")
@@ -37,6 +39,7 @@ defmodule Gateway.Router do
   forward("/service", to: Router.Discovery)
 
   match _ do
+    Logger.error("Undefined request path")
     send_resp(conn, 404, "404")
   end
 end
