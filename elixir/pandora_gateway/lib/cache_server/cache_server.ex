@@ -87,17 +87,21 @@ defmodule Cache.CacheServer do
     :ok = :gen_tcp.send(socket, operation)
 
     response = receive_data(socket, "")
+    IO.inspect(response)
 
     case String.split(response, "|") do
       ["OK", "NOT FOUND", _] ->
+        disconnect_socket(socket)
         {:reply, {:not_found}, state}
 
       ["OK", data, _] ->
         Logger.info("Found #{key} cache in bucket: \"#{bucket}\"")
+        disconnect_socket(socket)
         {:reply, {:found, data}, state}
 
       ["ERROR", "BAD REQUEST", _] ->
         Logger.error("Error getting in #{bucket}: #{key}")
+        disconnect_socket(socket)
         {:reply, {:not_found}, state}
     end
   end
@@ -108,9 +112,10 @@ defmodule Cache.CacheServer do
     {:ok, socket} = connect_socket('#{state.address}', state.port, opts)
 
     operation = "0|0|del|#{bucket}|#{key}|\r\n"
+    IO.inspect(operation)
     :ok = :gen_tcp.send(socket, operation)
-
     response = receive_data(socket, "")
+    disconnect_socket(socket)
 
     case String.split(response, "|") do
       ["OK", data, _] ->
@@ -153,7 +158,7 @@ defmodule Cache.CacheServer do
   end
 
   defp disconnect_socket(socket) do
-    Logger.info("Connection closed")
+    Logger.info("Closing Connection")
     :gen_tcp.close(socket)
   end
 
@@ -163,6 +168,7 @@ defmodule Cache.CacheServer do
     case response do
       "OK\r\n" -> data
       "OK|NOT FOUND|\r\n" -> response
+      "OK|DEL|\r\n" -> data
       _ -> receive_data(socket, data <> response)
     end
   end

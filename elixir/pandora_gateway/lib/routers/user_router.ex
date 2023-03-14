@@ -44,7 +44,7 @@ defmodule Router.User do
     {status, body} =
       GenServer.call(
         :userservice,
-        {:request, :post_request, "/user/login", Poison.encode!(conn.body_params)}
+        {:request, :post_request, "/login", Poison.encode!(conn.body_params)}
       )
 
     respond(conn, status, body)
