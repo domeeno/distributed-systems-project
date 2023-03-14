@@ -15,12 +15,15 @@ defmodule Cache.Server do
   end
 
   defp serve(socket) do
+    socket_id = UUID.uuid4()
+    Logger.info("Serving new socket: #{socket_id}")
+
     msg =
       with {:ok, data} <- read_line(socket),
            {:ok, operation} <- Cache.Parser.parse(data),
            do: Cache.Parser.run(operation)
 
-    Logger.info("Command parsed. Finished.")
+    Logger.info("Command parsed. Finished #{socket_id}")
     write_line(socket, msg)
     serve(socket)
   end
@@ -44,8 +47,12 @@ defmodule Cache.Server do
           {:ok, result}
         end
 
-      # MATCH EVERYTHING ELSE THAT IS NOT {:ok}
+      {:error, :closed} ->
+        Logger.info("Socket disconnected")
+        response
+
       _ ->
+        Logger.info(response)
         response
     end
   end
