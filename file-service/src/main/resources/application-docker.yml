@@ -27,6 +27,3 @@ pandora:
   services:
     gateway:
       url: "http://gateway:4000"
-
-logstash:
-  address: elk:5055

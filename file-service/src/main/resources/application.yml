@@ -28,6 +28,3 @@ pandora:
   services:
     gateway:
       url: "http://localhost:4000"
-
-logstash:
-  address: localhost:5055

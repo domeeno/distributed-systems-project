@@ -5,3 +5,6 @@ short-posts
 short-posts/*
 
 *.log
+
+.idea
+.idea/*
