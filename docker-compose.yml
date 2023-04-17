@@ -1,103 +1,30 @@
 version: '3.1'
 
 services:
-  
-  gateway:
-    image: p-gate 
-    ports:
-      - "4000:4000"
-    cap_add:
-      - NET_ADMIN
-    networks:
-      - pandora
-    container_name: gateway
 
-  cache:
-    image: p-cache
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.0.2
+    restart: always
+    container_name: keycloak
+    command:
+        - "start-dev"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KEYCLOAK_IMPORT: /tmp/realm.json
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_PORT: 5432
+      KC_DB_USERNAME: admin
+      KC_DB_PASSWORD: password
+      KC_DB_SCHEMA: identity_schema
+    volumes:
+        - ./keycloak/realm.json:/tmp/realm.json
+        - ./keycloak/themes:/opt/jboss/keycloak/themes
     ports:
-      - "4040:4040"
-    cap_add:
-      - NET_ADMIN
+        - "8080:8080"
     networks:
       - pandora
-    container_name: cache
-
-  course-service:
-    image: p-course 
-    ports:
-      - "8444:8444"
-    depends_on:
-      - mongo
-      - gateway
-    cap_add:
-      - NET_ADMIN
-    networks:
-      - pandora
-    container_name: course-service
-
-  course-service-a:
-    image: p-course 
-    ports:
-      - "8454:8444"
-    depends_on:
-      - mongo
-      - gateway
-    cap_add:
-      - NET_ADMIN
-    networks:
-      - pandora
-    container_name: course-service-a
-
-  course-service-failing:
-    image: p-course-faulty 
-    ports:
-      - "8464:8444"
-    depends_on:
-      - mongo
-      - gateway
-    cap_add:
-      - NET_ADMIN
-    networks:
-      - pandora
-    container_name: course-service-failing
-
-  user-service:
-    image: p-user
-    ports:
-      - "8443:8443"
-    depends_on:
-      - mongo
-      - gateway
-    cap_add:
-      - NET_ADMIN
-    networks:
-      - pandora
-    container_name: user-service
-  
-  user-service-failing:
-    image: p-user-faulty
-    ports:
-      - "8453:8443"
-    depends_on:
-      - mongo
-      - gateway
-    cap_add:
-      - NET_ADMIN
-    networks:
-      - pandora
-    container_name: user-service-failing
-
-  file-service:
-    image: p-bucket
-    ports:
-      - "8445:8445"
-    depends_on:
-      - gateway
-    cap_add:
-      - NET_ADMIN
-    networks:
-      - pandora
-    container_name: file-service
 
   mongo:
     image: mongo
@@ -122,6 +49,7 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: admin
       ME_CONFIG_MONGODB_ADMINPASSWORD: password
       ME_CONFIG_MONGODB_URL: mongodb://admin:password@mongo:27017/
+    container_name: mongo-express
     networks:
       - pandora
 
@@ -154,18 +82,6 @@ services:
     networks:
       - pandora
     restart: unless-stopped
-
-  elk:
-    image: sebp/elk
-    ports:
-      - "5601:5601"
-      - "9200:9200"
-      - "5044:5044"
-      - "5055:5055"
-    restart: unless-stopped
-    networks:
-      - pandora
-    container_name: elk
 
 networks:
   pandora:

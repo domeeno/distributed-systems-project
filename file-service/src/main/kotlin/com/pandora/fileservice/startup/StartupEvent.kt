@@ -7,7 +7,6 @@ import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 
-@Component
 class StartupEvent : ApplicationListener<ContextRefreshedEvent> {
     @Value("\${server.port}")
     private val port: String = ""
